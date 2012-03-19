@@ -5,7 +5,7 @@
 
 (defn content-type
   "Returns the value of the Content-Type header of `r`."
-  [r] (get (:headers r) "Content-Type"))
+  [r] (get (:headers r) "content-type"))
 
 (defmulti deserialize-content-type
   "Deserialize the body of `response` according to the Content-Type
@@ -34,20 +34,25 @@ header or *content-type*."
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] prn-str)
-        (assoc-in [:headers "Content-Type"] "application/clojure"))
+        (assoc-in [:headers "content-type"] "application/clojure"))
     request))
 
 (defmethod serialize-content-type :application/json
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] json-str)
-        (assoc-in [:headers "Content-Type"] "application/json"))
+        (assoc-in [:headers "content-type"] "application/json"))
     request))
 
-(defn wrap-serialization
+(defmacro with-content-type
+  "Evaluate `body` with *content-type* bound to `content-type`."
+  [content-type & body]
+  `(binding [*content-type* ~content-type]
+     ~@body))
+
+(defn wrap-content-type
   [handler]
   (fn [request]
-    (prn (serialize-content-type request))
     (-> request
         serialize-content-type
         handler
