@@ -8,47 +8,68 @@
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :get (:request-method request))))]
-    (get "/users/1-roman")))
+       (is (= :get (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (get "http://example.com/users/1-roman")))
 
 (deftest test-delete
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :delete (:request-method request))))]
-    (delete "/users/1-roman")))
+       (is (= :delete (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (delete "http://example.com/users/1-roman")))
 
 (deftest test-head
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :head (:request-method request))))]
-    (head "/users/1-roman")))
+       (is (= :head (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (head "http://example.com/users/1-roman")))
 
 (deftest test-options
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :options (:request-method request))))]
-    (options "/users/1-roman")))
+       (is (= :options (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (options "http://example.com/users/1-roman")))
 
 (deftest test-post
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :post (:request-method request))))]
-    (post "/users")))
+       (is (= :post (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users" (:uri request))))]
+    (post "http://example.com/users")))
 
 (deftest test-put
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :put (:request-method request))))]
-    (put "/users/1-roman")))
+       (is (= :put (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (put "http://example.com/users/1-roman")))
 
 (deftest test-trace
   (with-redefs
     [send-request
      (fn [request]
-       (is (= :trace (:request-method request))))]
-    (trace "/users/1-roman")))
+       (is (= :trace (:request-method request)))
+       (is (= :http (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= "/users/1-roman" (:uri request))))]
+    (trace "http://example.com/users/1-roman")))

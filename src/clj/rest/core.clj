@@ -4,38 +4,38 @@
         [rest.request :only (send-request)]))
 
 (defprotocol IResource
-  (decode [request] "Encode the `request`.")
-  (encode [response] "Decode the `resource`."))
+  (decode [response] "Decode the Ring request map into a `resource`.")
+  (encode [resource] "Encode the `resource` into a Ring request map."))
 
 (defn delete
   "Get the represention of `resource`."
   [resource & options]
-  (send-request (assoc options :request-method :delete)))
+  (send-request (assoc (encode resource) :request-method :delete)))
 
 (defn get
   "Get the represention of `resource`."
-  [resource & {:as options}]
-  (send-request (assoc options :request-method :get)))
+  [resource & {:as query-params}]
+  (assoc (encode resource) :request-method :get))
 
 (defn head
   "Check if the `resource` exists."
   [resource & options]
-  (send-request (assoc options :request-method :head)))
+  (send-request (assoc (encode resource) :request-method :head)))
 
 (defn options
   "Get the options of `resource`."
   [resource & options]
-  (send-request (assoc options :request-method :options)))
+  (send-request (assoc (encode resource) :request-method :options)))
 
 (defn post
   "Create a new `resource`."
   [resource & options]
-  (send-request (assoc options :request-method :post)))
+  (send-request (assoc (encode resource) :request-method :post)))
 
 (defn put
   "Change the representation of `resource`."
   [resource & options]
-  (send-request (assoc options :request-method :put)))
+  (send-request (assoc (encode resource) :request-method :put)))
 
 (defn trace
   "Trace the `resource`."
@@ -45,6 +45,19 @@
   IResource
   (encode [string]
     (parse-url string)))
+
+(extend-type clojure.lang.IPersistentMap
+  IResource
+  (encode [{:keys [uri url] :as resource}]
+    (cond
+     (string? uri)
+     resource
+     (and (string? url)
+          (re-matches #"https?://.*" url))
+     (assoc (parse-url url) :body resource))))
+
+;; (get "http://example.com/users" :page 1)
+;; (get {:url "http://example.com/users"} :page 1)
 
 ;; (encode "/continents")
 ;; (encode "http://api.burningswell.com/continents?page=1")
@@ -92,3 +105,6 @@
 ;; (trace "/countries/de-germany" {:name "Germany"})
 ;; (trace "/countries/de-germany" {:name "Germany"} :page 1)
 ;; (trace {:name "Germany" :url "/countries/de-germany"} :page 1)
+
+;; (get "http://example.com/users" :page 1)
+;; (get {:url "http://example.com/users"} :page 1)
