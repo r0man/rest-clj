@@ -10,8 +10,9 @@
 
 (defn make-request
   "Send the HTTP request via *client*."
-  [request-method resource & {:as options}]
+  [request-method resource & [{:as options}]]
   (-> (merge (request resource) options)
+      (assoc :method request-method)
       (assoc :request-method request-method)))
 
 (defn send-request
@@ -20,38 +21,38 @@
 
 (defn delete
   "Get the represention of `resource`."
-  [resource & options]
-  (send-request (apply make-request :delete resource options)))
+  [resource & [options]]
+  (send-request (make-request :delete resource options)))
 
 (defn get
   "Get the represention of `resource`."
-  [resource & options]
-  (send-request (apply make-request :get resource options)))
+  [resource & [options]]
+  (send-request (make-request :get resource options)))
 
 (defn head
   "Check if the `resource` exists."
-  [resource & options]
-  (send-request (apply make-request :head resource options)))
+  [resource & [options]]
+  (send-request (make-request :head resource options)))
 
 (defn options
   "Get the options of `resource`."
-  [resource & options]
-  (send-request (apply make-request :options resource options)))
+  [resource & [options]]
+  (send-request (make-request :options resource options)))
 
 (defn post
   "Create a new `resource`."
-  [resource & options]
-  (send-request (apply make-request :post resource options)))
+  [resource & [options]]
+  (send-request (make-request :post resource options)))
 
 (defn put
   "Change the representation of `resource`."
-  [resource & options]
-  (send-request (apply make-request :put resource options)))
+  [resource & [options]]
+  (send-request (make-request :put resource options)))
 
 (defn trace
   "Trace the `resource`."
-  [resource & options]
-  (send-request (apply make-request :trace resource options)))
+  [resource & [options]]
+  (send-request (make-request :trace resource options)))
 
 (defmacro with-client
   "Evaluate `body` with *client* bound to `client`."
@@ -72,4 +73,4 @@
      resource
      (string? url)
      (assoc (parse-url url) :body resource)
-     :else (throw (Exception. (str "Can't create Ring request map from: " resource))))))
+     :else (throw (Exception. (str "Can't create Ring request from: " resource))))))

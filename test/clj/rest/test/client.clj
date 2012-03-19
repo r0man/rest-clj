@@ -8,6 +8,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :get (:method request)))
        (is (= :get (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -16,6 +17,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :get (:method request)))
        (is (= :get (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -26,6 +28,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :delete (:method request)))
        (is (= :delete (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -34,6 +37,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :delete (:method request)))
        (is (= :delete (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -44,6 +48,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :head (:method request)))
        (is (= :head (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -52,6 +57,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :head (:method request)))
        (is (= :head (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -62,6 +68,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :options (:method request)))
        (is (= :options (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -70,6 +77,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :options (:method request)))
        (is (= :options (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -80,6 +88,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :post (:method request)))
        (is (= :post (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -88,6 +97,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :post (:method request)))
        (is (= :post (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -98,6 +108,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :put (:method request)))
        (is (= :put (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -106,6 +117,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :put (:method request)))
        (is (= :put (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -116,6 +128,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :trace (:method request)))
        (is (= :trace (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
@@ -124,6 +137,7 @@
   (with-redefs
     [send-request
      (fn [request]
+       (is (= :trace (:method request)))
        (is (= :trace (:request-method request)))
        (is (= :http (:scheme request)))
        (is (= "example.com" (:server-name request)))
