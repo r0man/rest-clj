@@ -1,9 +1,11 @@
 (ns rest.client
   (:refer-clojure :exclude (get))
   (:require [clj-http.client :as client])
-  (:use [clj-http.client :only (parse-url)]))
+  (:use [clj-http.client :only (parse-url)]
+        [rest.io :only (wrap-serialization)]))
 
-(def ^:dynamic *client* client/request)
+(def ^:dynamic *client*
+  (wrap-serialization client/request))
 
 (defprotocol IRequest
   (request [arg] "Convert `arg` to Ring request map."))

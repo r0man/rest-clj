@@ -1,5 +1,5 @@
 (ns rest.io
-  (:use [clojure.data.json :only (read-json)]))
+  (:use [clojure.data.json :only (json-str read-json)]))
 
 (def ^:dynamic *content-type* :application/json)
 
@@ -24,17 +24,31 @@ header or *content-type*."
     (update-in response [:body] read-json)
     response))
 
-(defmethod deserialize-content-type :default [response]
-  response)
-
 (defmulti serialize-content-type
   "Serialize the body of `response` according to the Content-Type
 header or *content-type*."
   (fn [request]
     (or (content-type request) *content-type*)))
 
-(defmethod serialize-content-type :default
+(defmethod serialize-content-type :application/clojure
   [{:keys [body] :as request}]
   (if body
-    (update-in request [:body] str)
+    (-> (update-in request [:body] prn-str)
+        (assoc-in [:headers "Content-Type"] "application/clojure"))
     request))
+
+(defmethod serialize-content-type :application/json
+  [{:keys [body] :as request}]
+  (if body
+    (-> (update-in request [:body] json-str)
+        (assoc-in [:headers "Content-Type"] "application/json"))
+    request))
+
+(defn wrap-serialization
+  [handler]
+  (fn [request]
+    (prn (serialize-content-type request))
+    (-> request
+        serialize-content-type
+        handler
+        deserialize-content-type)))
