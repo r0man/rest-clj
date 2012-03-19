@@ -1,47 +1,57 @@
 (ns rest.core
   (:refer-clojure :exclude (get))
-  (:use [rest.request :only (send-request)]))
+  (:use [clj-http.client :only (parse-url)]
+        [rest.request :only (send-request)]))
 
 (defprotocol IResource
   (decode [request] "Encode the `request`.")
   (encode [response] "Decode the `resource`."))
 
-(extend-type String
-  IResource
-  (encode [string] {:url string}))
-
 (defn delete
   "Get the represention of `resource`."
-  [resource & options])
+  [resource & options]
+  (send-request (assoc options :request-method :delete)))
 
 (defn get
   "Get the represention of `resource`."
-  [resource & options]
-  (send-request (assoc (encode resource) :method :get)))
+  [resource & {:as options}]
+  (send-request (assoc options :request-method :get)))
 
 (defn head
   "Check if the `resource` exists."
-  [resource & options])
+  [resource & options]
+  (send-request (assoc options :request-method :head)))
 
 (defn options
   "Get the options of `resource`."
-  [resource & options])
+  [resource & options]
+  (send-request (assoc options :request-method :options)))
 
 (defn post
   "Create a new `resource`."
-  [resource & options])
+  [resource & options]
+  (send-request (assoc options :request-method :post)))
 
 (defn put
   "Change the representation of `resource`."
-  [resource & options])
+  [resource & options]
+  (send-request (assoc options :request-method :put)))
 
 (defn trace
   "Trace the `resource`."
   [resource & options])
 
-;; (defmacro defendpoint [& args])
-;; (defmacro defresource [& args])
-;; (defmacro defresources [url & args])
+(extend-type String
+  IResource
+  (encode [string]
+    (parse-url string)))
+
+;; (encode "/continents")
+;; (encode "http://api.burningswell.com/continents?page=1")
+
+(defmacro defendpoint [& args])
+(defmacro defresource [& args])
+(defmacro defresources [url & args])
 
 ;; (defresources countries
 ;;   "/countries"
@@ -50,6 +60,9 @@
 ;; (defresources users
 ;;   "/users"
 ;;   [":id-::nick" :id ::nick])
+
+(defresource user ["/users/:id-:nick" :id :nick][user]
+  :uri (interpolate ["/users/:id-:nick" :id :nick] user))
 
 ;; (delete "/countries/de-germany")
 ;; (delete "/countries/de-germany" :page 1)

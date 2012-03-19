@@ -6,5 +6,6 @@
   :dependencies [[clj-http "0.3.3"]
                  [org.clojure/clojure "1.4.0-beta4"]
                  [org.clojure/data.json "0.1.2"]]
+  :plugins [[lein-cljsbuild "0.1.2"]]
   :source-paths ["src/clj"]
   :test-paths ["test/clj"])
