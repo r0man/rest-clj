@@ -15,12 +15,13 @@
        (join "-")))
 
 (defn path
-  "Make a path by joining `segments` with exactly one slash."
+  "Make a path by joining `segments` with a slash."
   [& segments]
-  (str "/" (->> (map str segments)
-                (remove blank?)
-                (map #(replace %1 #"^/+" ""))
-                (join "/"))))
+  (->> (map str segments)
+       (remove blank?)
+       (map #(replace %1 #"^/+" ""))
+       (join "/")
+       (str "/")))
 
 (defn parse-keys [pattern]
   (->> (split pattern #"/")
