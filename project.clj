@@ -11,14 +11,23 @@
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:source-path "src/cljs"
                         :compiler {:output-to "target/rest-debug.js"}}
-                       {:source-path "src/cljs"
-                        :compiler {:output-to "target/rest.js"
+                       {:compiler {:output-to "target/rest.js"
                                    :optimizations :advanced
                                    :pretty-print false}
-                        :jar true}]
+                        :source-path "src/cljs"}
+                       {:compiler {:output-to "target/rest-test.js"
+                                   :optimizations :whitespace
+                                   :pretty-print true}
+                        :jar true
+                        :source-path "test/cljs"}]
+              :crossover-jar true
+              :crossover-path ".crossover-cljs"
+              :crossovers [rest.core
+                           rest.util]
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
-               "firefox" ["firefox" "http://http://localhost:9000/"]}}
+               "firefox" ["firefox" "http://http://localhost:9000/"]}
+              :test-commands {"unit" ["./test-cljs.sh"]}}
   :source-paths ["src/clj"]
   :test-paths ["test/clj"])

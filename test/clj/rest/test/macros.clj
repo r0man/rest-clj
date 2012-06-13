@@ -14,6 +14,6 @@
       (is (= ['continent] (:args route)))
       (is (= :continent (:name route)))
       (is (= [[:iso-3166-1-alpha-2 :name]] (:params route))))
-    (let [request (continent europe)]
+    (let [request (continent europe :page 1)]
       (is (= (continent-path europe) (:uri request)))
-      (is (= {} (:query-params request))))))
+      (is (= {:page 1} (:query-params request))))))
