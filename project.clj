@@ -16,7 +16,7 @@
                                    :pretty-print false}
                         :source-path "src/cljs"}
                        {:compiler {:output-to "target/rest-test.js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print true}
                         :jar true
                         :source-path "test/cljs"}]
