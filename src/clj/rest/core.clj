@@ -1,6 +1,15 @@
-(ns rest.core
-  (:refer-clojure :exclude (get))
-  (:use [clj-http.client :only (parse-url)]))
+(ns rest.core)
+
+(def ^:dynamic *routes* (atom {}))
+
+(defn route
+  "Lookup a route by `name`."
+  [name] (get @*routes* (keyword name)))
+
+(defn register-route
+  "Register `route` by associng `route` onto *routes* using the value
+  of the route's :name key."
+  [route] (swap! *routes* assoc (keyword (:name route)) route))
 
 ;; (get "http://example.com/users" :page 1)
 ;; (get {:url "http://example.com/users"} :page 1)
@@ -8,9 +17,9 @@
 ;; (encode "/continents")
 ;; (encode "http://api.burningswell.com/continents?page=1")
 
-(defmacro defendpoint [& args])
-(defmacro defresource [& args])
-(defmacro defresources [url & args])
+;; (defmacro defendpoint [& args])
+;; (defmacro defresource [& args])
+;; (defmacro defresources [url & args])
 
 ;; (defresources countries
 ;;   "/countries"
@@ -20,8 +29,8 @@
 ;;   "/users"
 ;;   [":id-::nick" :id ::nick])
 
-(defresource user ["/users/:id-:nick" :id :nick][user]
-  :uri (interpolate ["/users/:id-:nick" :id :nick] user))
+;; (defresource user ["/users/:id-:nick" :id :nick][user]
+;;   :uri (interpolate ["/users/:id-:nick" :id :nick] user))
 
 ;; (delete "/countries/de-germany")
 ;; (delete "/countries/de-germany" :page 1)

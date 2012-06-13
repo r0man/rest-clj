@@ -5,7 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[clj-http "0.4.3"]
                  [inflections "0.7.0-SNAPSHOT"]
-                 [org.clojure/clojure "1.4.0"]]
+                 [org.clojure/clojure "1.4.0"]
+                 [org.clojure/data.json "0.1.2"]]
   :plugins [[lein-cljsbuild "0.2.1"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:source-path "src/cljs"

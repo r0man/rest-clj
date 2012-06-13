@@ -1,7 +1,8 @@
 (ns rest.client
-  (:refer-clojure :exclude (get))
+  (:refer-clojure :exclude (get replace))
   (:require [clj-http.client :as client])
   (:use [clj-http.client :only (parse-url)]
+        [clojure.string :only (replace)]
         [rest.io :only (wrap-content-type)]))
 
 (def ^:dynamic *client*
@@ -11,11 +12,11 @@
   (request [arg] "Convert `arg` to Ring request map."))
 
 (defn make-request
-  "Send the HTTP request via *client*."
-  [request-method resource & [{:as options}]]
+  "Make a Ring request map."
+  [method resource & [{:as options}]]
   (-> (merge (request resource) options)
-      (assoc :method request-method)
-      (assoc :request-method request-method)))
+      (assoc :method method)
+      (assoc :request-method method)))
 
 (defn send-request
   "Send the HTTP request via *client*."
@@ -76,3 +77,44 @@
      (string? url)
      (assoc (parse-url url) :body resource)
      :else (throw (Exception. (str "Can't create Ring request from: " resource))))))
+
+
+;; :body-encoding is optional and defaults to "UTF-8"
+;; (client/post
+;;  "http://api.burningswell.dev/continents"
+;;  {:form-params {:name "Europe"} :content-type :json})
+
+(defn interpolate [[pattern & keys] record]
+  (reduce
+   (fn [& [pattern key]]
+     (let [value (str (clojure.core/get record key))]
+       (replace pattern (str key) value)))
+   pattern keys))
+
+(interpolate ["/continents/:id-:name" :id :name] {:id 1 :name "europe"})
+
+(defn create-continent [continent & {:as options}]
+  (client/post
+   (or (:url continent) "/continents")
+   {:content-type :json
+    :form-params continent
+    :query-params (:query-params options)}))
+
+(defn delete-continent [continent]
+  (client/delete
+   (or (:url continent) (interpolate ["/continents/:id-:name" :id :name] continent))
+   {:content-type :json
+    :form-params continent
+    :query-params (:query-params options)}))
+
+(defn continent [continent & {:as options}]
+  (client/get
+   (or (:url continent) (interpolate ["/continents/:id-:name" :id :name] continent))
+   {:as :json-string-keys
+    :query-params (:query-params options)}))
+
+(defn continents [continent & {:as options}]
+  (client/get
+   (or (:url continent) "/continents")
+   {:as :json-string-keys
+    :query-params (:query-params options)}))
