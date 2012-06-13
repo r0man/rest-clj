@@ -7,5 +7,5 @@
   (is (= "\"\"" (json-str ""))))
 
 (deftest test-read-json
-  (is (thrown? Exception (read-json nil)))
+  (is (nil? (read-json nil)))
   (is (= 1 (read-json "1"))))

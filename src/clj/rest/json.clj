@@ -5,4 +5,4 @@
   (j/json-str arg))
 
 (defn read-json [s]
-  (j/read-json s))
+  (if s (j/read-json s)))
