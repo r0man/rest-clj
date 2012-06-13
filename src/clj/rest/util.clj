@@ -43,6 +43,8 @@
    pattern (map vector (parse-keys pattern) args)))
 
 (defn server-url []
-  (str (name (:scheme *server*)) "://" (:server-name *server*)
-       (if-let [port (:server-port *server*)]
-         (str ":" port))))
+  (let [{:keys [scheme server-name server-port]} *server*]
+    (assert scheme)
+    (assert server-name)
+    (str (name scheme) "://" server-name
+         (if server-port (str ":" server-port)))))
