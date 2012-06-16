@@ -4,34 +4,38 @@
         rest.io))
 
 (deftest test-content-type
-  (is (nil? (content-type {})))
-  (is (nil? (content-type {:headers {}})))
-  (is (= "application/json" (content-type {:headers {"content-type" "application/json"}}))))
+  (are [type expected]
+    (is (= expected (content-type {:headers {"content-type" type}})))
+    nil nil
+    "" nil
+    "appication/json" "appication/json"
+    "appication/clojure" "appication/clojure"
+    "application/json;charset=UTF-8" "application/json"))
 
-(deftest test-deserialize-content-type
-  (is (nil? (deserialize-content-type nil)))
-  (is (= {} (deserialize-content-type {})))
+(deftest test-deserialize
+  (is (nil? (deserialize nil)))
+  (is (= {} (deserialize {})))
   (let [body {:a 1 :b 2}]
     (testing "application/json"
-      (with-content-type :application/clojure
-        (let [request (deserialize-content-type {:body (prn-str body)})]
+      (binding [*content-type* :application/clojure]
+        (let [request (deserialize {:body (prn-str body)})]
           (is (= body (:body request))))))
     (testing "application/json"
-      (with-content-type :application/json
-        (let [request (deserialize-content-type {:body (json-str body)})]
+      (binding [*content-type* :application/json]
+        (let [request (deserialize {:body (json-str body)})]
           (is (= body (:body request))))))))
 
-(deftest test-serialize-content-type
-  (is (nil? (serialize-content-type nil)))
-  (is (= {} (serialize-content-type {})))
+(deftest test-serialize
+  (is (nil? (serialize nil)))
+  (is (= {} (serialize {})))
   (let [body {:a 1 :b 2}]
     (testing "application/json"
-      (with-content-type :application/clojure
-        (let [request (serialize-content-type {:body body})]
+      (binding [*content-type* :application/clojure]
+        (let [request (serialize {:body body})]
           (is (= "application/clojure" (content-type request)))
           (is (= (prn-str body) (:body request))))))
     (testing "application/json"
-      (with-content-type :application/json
-        (let [request (serialize-content-type {:body body})]
+      (binding [*content-type* :application/json]
+        (let [request (serialize {:body body})]
           (is (= "application/json" (content-type request)))
           (is (= (json-str body) (:body request))))))))

@@ -1,6 +1,6 @@
 (ns rest.test.macros
-  (:use clojure.test
-        rest.core
+  (:use [rest.core :only (route)]
+        clojure.test
         rest.macros))
 
 (deftest test-defroute
