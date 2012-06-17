@@ -3,6 +3,9 @@
         clojure.test
         rest.macros))
 
+(def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
+(def spain {:iso-3166-1-alpha-2 "es" :name "Spain"})
+
 (deftest test-defroute
   (testing "/continents"
     (defroute continents []
@@ -13,21 +16,22 @@
       (is (= "/continents" (:pattern route)))
       (is (= [] (:args route)))
       (is (= :continents (:name route)))
-      (is (= [] (:params route))))
-    (let [request (continents :page 1)]
-      (is (= (continents-path) (:uri request)))
-      (is (= {:page 1} (:query-params request)))))
+      (is (= [] (:params route)))))
   (testing "/continents/:iso-3166-1-alpha-2-:name"
     (defroute continent [continent]
       "/continents/:iso-3166-1-alpha-2-:name")
-    (let [europe {:iso-3166-1-alpha-2 "eu" :name "europe"}]
-      (is (= "/continents/eu-europe" (continent-path europe)))
-      (is (= "https://example.com/continents/eu-europe" (continent-url europe)))
-      (let [route (route :continent)]
-        (is (= "/continents/:iso-3166-1-alpha-2-:name" (:pattern route)))
-        (is (= ['continent] (:args route)))
-        (is (= :continent (:name route)))
-        (is (= [[:iso-3166-1-alpha-2 :name]] (:params route))))
-      (let [request (continent europe :page 1)]
-        (is (= (continent-path europe) (:uri request)))
-        (is (= {:page 1} (:query-params request)))))))
+    (is (= "/continents/eu-europe" (continent-path europe)))
+    (is (= "https://example.com/continents/eu-europe" (continent-url europe)))
+    (let [route (route :continent)]
+      (is (= "/continents/:iso-3166-1-alpha-2-:name" (:pattern route)))
+      (is (= ['continent] (:args route)))
+      (is (= :continent (:name route)))
+      (is (= [[:iso-3166-1-alpha-2 :name]] (:params route))))))
+
+(deftest test-defresources
+  (defresources continents [continent]
+    "/continents/:iso-3166-1-alpha-2-:name")
+  (is (= "/continents" (continents-path)))
+  (is (= "/continents/eu-europe" (continent-path europe)))
+  (is (= "/continents/new" (new-continent-path)))
+  (is (= "/continents/eu-europe/edit" (edit-continent-path europe))))

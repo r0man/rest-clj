@@ -1,7 +1,7 @@
 (ns rest.core
   (:refer-clojure :exclude (get))
   (:use;*CLJSBUILD-REMOVE*;-macros
-   [rest.macros :only (defverb)]))
+   [rest.macros :only (defverb defresources)]))
 
 (def ^:dynamic *routes* (atom {}))
 
