@@ -16,6 +16,7 @@
                                    :pretty-print false}
                         :source-path "src/cljs"}
                        {:compiler {:output-to "target/rest-test.js"
+                                   ;; :optimizations :whitespace
                                    :optimizations :advanced
                                    :pretty-print true}
                         :jar true
@@ -23,7 +24,8 @@
               :crossover-jar true
               :crossover-path ".crossover-cljs"
               :crossovers [rest.core
-                           rest.util]
+                           rest.util
+                           rest.routes]
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
