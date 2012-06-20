@@ -12,7 +12,7 @@
             :args (quote ~args#)
             :pattern ~pattern#
             :params ~(parse-keys pattern#)})
-         (swap! rest.core/*routes* assoc ~(keyword name#)
+         (swap! rest.routes/*routes* assoc ~(keyword name#)
                 {:name ~(keyword name#)
                  :args (quote ~args#)
                  :pattern ~pattern#

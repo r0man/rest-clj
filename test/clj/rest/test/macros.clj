@@ -1,5 +1,5 @@
 (ns rest.test.macros
-  (:use [rest.core :only (route)]
+  (:use [rest.routes :only (route)]
         clojure.test
         rest.macros))
 
