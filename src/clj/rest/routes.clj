@@ -2,6 +2,8 @@
 
 (def ^:dynamic *routes* (atom {}))
 
+(defrecord Route [name args pattern params])
+
 (defn route
   "Lookup a route by `name`."
   [name] (get @*routes* (keyword name)))

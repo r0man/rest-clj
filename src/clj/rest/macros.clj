@@ -7,16 +7,14 @@
 
 (defmacro defroute [name args pattern]
   (let [name# name args# args pattern# pattern]
-    `(do (def ~(symbol (str name# "-route"))
+    `(do (rest.routes/register
+          (rest.routes/map->Route
            {:name ~(keyword name#)
             :args (quote ~args#)
             :pattern ~pattern#
-            :params ~(parse-keys pattern#)})
-         (swap! rest.routes/*routes* assoc ~(keyword name#)
-                {:name ~(keyword name#)
-                 :args (quote ~args#)
-                 :pattern ~pattern#
-                 :params ~(parse-keys pattern#)})
+            :params ~(parse-keys pattern#)}))
+         (defn ^:export ~(symbol (str name# "-route")) []
+           (rest.routes/route ~(keyword name#)))
          (defn ^:export ~(symbol (str name# "-path")) [~@args#]
            (rest.util/format-pattern ~pattern# ~@args#))
          (defn ^:export ~(symbol (str name# "-url")) [~@args#]
