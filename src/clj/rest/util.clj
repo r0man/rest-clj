@@ -1,7 +1,7 @@
 (ns rest.util
-  (:refer-clojure :exclude (replace))
-  (:use [clojure.string :only (blank? join lower-case split replace replace-first)]
-        [inflections.core :only (parameterize)]))
+  (:refer-clojure :exclude [replace])
+  (:require [clojure.string :refer [blank? join lower-case split replace replace-first]]
+            [inflections.core :refer [parameterize]]))
 
 (def ^:dynamic *server*
   {:scheme :https :server-name "example.com"})

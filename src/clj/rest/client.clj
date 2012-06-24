@@ -1,9 +1,9 @@
 (ns rest.client
   (:refer-clojure :exclude (replace))
   (:require [clj-http.client :as client])
-  (:use [clj-http.client :only (parse-url)]
-        [clojure.string :only (replace)]
-        [rest.io :only (wrap-input-coercion wrap-output-coercion)]))
+  (:use [clj-http.client :refer (parse-url)]
+        [clojure.string :refer (replace)]
+        [rest.io :refer (wrap-input-coercion wrap-output-coercion)]))
 
 (def ^:dynamic *client*
   (-> client/request

@@ -1,7 +1,7 @@
 (ns rest.core
-  (:refer-clojure :exclude (get))
-  (:use;*CLJSBUILD-REMOVE*;-macros
-   [rest.macros :only (defverb defresources)]))
+  (:refer-clojure :exclude [get])
+  (:require;*CLJSBUILD-REMOVE*;-macros
+   [rest.macros :refer [defverb defresources]]))
 
 (defverb delete)
 (defverb get)

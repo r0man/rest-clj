@@ -1,7 +1,7 @@
 (ns rest.io
-  (:refer-clojure :exclude (replace))
-  (:use [clojure.string :only (blank? replace)]
-        [rest.json :only (json-str read-json)]))
+  (:refer-clojure :exclude [replace])
+  (:require [clojure.string :refer [blank? replace]]
+            [rest.json :refer [json-str read-json]]))
 
 (def ^:dynamic *content-type* :application/json)
 
