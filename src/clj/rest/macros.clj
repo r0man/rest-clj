@@ -1,31 +1,18 @@
 ;;*CLJSBUILD-MACRO-FILE*;
 (ns rest.macros
-  (:refer-clojure :exclude (replace))
-  (:use [clojure.string :only (upper-case replace)]
-        [inflections.core :only (singular plural)]
-        [rest.util :only (format-pattern parse-keys)]))
-
-(defmacro defroute [name args pattern]
-  (let [name# name args# args pattern# pattern]
-    `(do (rest.routes/register
-          (rest.routes/map->Route
-           {:name ~(keyword name#)
-            :args (quote ~args#)
-            :pattern ~pattern#
-            :params ~(parse-keys pattern#)}))
-         (defn ^:export ~(symbol (str name# "-route")) []
-           (rest.routes/route ~(keyword name#)))
-         (defn ^:export ~(symbol (str name# "-path")) [~@args#]
-           (rest.util/format-pattern ~pattern# ~@args#))
-         (defn ^:export ~(symbol (str name# "-url")) [~@args#]
-           (str (rest.util/server-url)
-                (rest.util/format-pattern ~pattern# ~@args#))))))
+  (:refer-clojure :exclude [replace])
+  (:require [clojure.string :refer [upper-case replace]]
+            [inflections.core :refer [singular plural]]
+            [rest.util :refer [format-pattern parse-keys]]
+            [routes.core :refer [defroute]]
+            rest.client))
 
 (defmacro defresources [name args pattern & {:as options}]
   (let [name# name
         args# args
         pattern# pattern
-        singular# (singular name)]
+        singular# (singular name)
+        ns# *ns*]
     `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
            ~(replace pattern# #"/[^/]+$" ""))
          (defroute ~singular# [~@args#]
@@ -33,11 +20,29 @@
          (defroute ~(symbol (str "new-" singular#)) []
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
-           ~(str pattern# "/edit")))))
+           ~(str pattern# "/edit"))
+         (defn ~name# [& ~'opts]
+           (rest.client/send-request
+            :get (~(symbol (str ns# "/" name# "-url")))))
+         (defn ~singular# [~singular# & ~'opts]
+           (rest.client/send-request
+            :get (~(symbol (str ns# "/" singular# "-url")) ~singular#) ~'opts))
+         (defn ~(symbol (str "create-" singular#)) [~singular# & ~'opts]
+           (rest.client/send-request
+            :post (~(symbol (str ns# "/" name# "-url")))
+            (merge ~'opts {:body ~singular#})))
+         (defn ~(symbol (str "delete-" singular#)) [~singular# & ~'opts]
+           (rest.client/send-request
+            :delete (~(symbol (str ns# "/" singular# "-url")) ~singular#)
+            ~'opts))
+         (defn ~(symbol (str "update-" singular#)) [~singular# & ~'opts]
+           (rest.client/send-request
+            :put (~(symbol (str ns# "/" singular# "-url")) ~singular#)
+            (merge ~'opts {:body ~singular#}))))))
 
 (defmacro defverb [verb]
   (let [verb# verb]
     `(defn ~verb#
        ~(format "Send the `request` with the %s method." (upper-case verb#))
-       [~'request & ~'options]
-       (apply rest.client/send-request ~(keyword verb#) ~'request ~'options))))
+       [~'url & ~'request]
+       (apply rest.client/send-request ~(keyword verb#) ~'url ~'request))))

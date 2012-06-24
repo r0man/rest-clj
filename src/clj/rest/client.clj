@@ -15,11 +15,13 @@
 
 (defn send-request
   "Send the HTTP request via *client*."
-  [method request & {:as options}]
-  (-> (merge (rest.client/request request) options)
-      (assoc :method method)
-      (assoc :request-method method)
-      (*client*)))
+  [method url & [request]]
+  (*client*
+   {:method method
+    :request-method method
+    :url url}))
+
+;; (send-request :get "http://api.burningswell.dev/continents")
 
 (defmacro with-client
   "Evaluate `body` with *client* bound to `client`."
