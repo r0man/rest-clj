@@ -1,21 +1,24 @@
 (ns rest.io
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [blank? replace]]
-            [rest.json :refer [json-str read-json]]))
+  (:require ;*CLJSBUILD-REMOVE*;[rest.clojurescript :refer [read-string]]
+   [clojure.string :refer [blank? replace]]
+   [rest.json :refer [json-str read-json]]))
 
-(def ^:dynamic *content-type* :application/json)
+(def ^:dynamic *accept* "application/json")
 
 (defn content-type
   "Returns the value of the Content-Type header of `request`."
   [request]
   (let [content-type (get (:headers request) "content-type")]
     (if-not (blank?  content-type)
-      (replace content-type #";.*" ""))))
+      (keyword (replace content-type #";.*" "")))))
 
 (defmulti deserialize
-  "Deserialize the body of `response` according to the Content-Type
-header or *content-type*."
-  (fn [response] (or (content-type response) *content-type*)))
+  "Deserialize the body of `response` according to the Content-Type header."
+  (fn [response] (content-type response)))
+
+(defmethod deserialize :default
+  [response] response)
 
 (defmethod deserialize :application/clojure
   [{:keys [body] :as response}]
@@ -30,10 +33,11 @@ header or *content-type*."
     response))
 
 (defmulti serialize
-  "Serialize the body of `response` according to the Content-Type
-header or *content-type*."
-  (fn [request]
-    (or (content-type request) *content-type*)))
+  "Serialize the body of `response` according to the Content-Type header."
+  (fn [request] (or (content-type request) *accept*)))
+
+(defmethod serialize :default
+  [request] request)
 
 (defmethod serialize :application/clojure
   [{:keys [body] :as request}]
@@ -49,8 +53,13 @@ header or *content-type*."
         (assoc-in [:headers "content-type"] "application/json"))
     request))
 
+(defn wrap-accept [handler]
+  (fn [request]
+    (handler (assoc-in request [:headers "Accept"] *accept*))))
+
 (defn wrap-input-coercion [handler]
   (fn [request] (handler (serialize request))))
 
 (defn wrap-output-coercion [handler]
-  (fn [request] (handler (deserialize request))))
+  (fn [request]
+    (deserialize (handler request))))

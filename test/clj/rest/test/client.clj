@@ -1,17 +1,15 @@
 (ns rest.test.client
-  (:import java.net.MalformedURLException)
-  (:refer-clojure :exclude (get))
   (:use clojure.test
         rest.client))
 
-(deftest test-request
-  (is (thrown? MalformedURLException (request "")))
-  (is (thrown? MalformedURLException (request "x")))
-  (let [request (request "http://example.com/")]
-    (is (= :http (:scheme request)))
-    (is (= "example.com" (:server-name request)))
-    (is (= "/" (:uri request))))
-  (let [request (request {:url "http://example.com/"})]
-    (is (= :http (:scheme request)))
-    (is (= "example.com" (:server-name request)))
-    (is (= "/" (:uri request)))))
+(deftest test-send-request
+  (let [body [{:name "Germany"} {:name "Spain"}]]
+    (with-redefs
+      [*client*
+       (fn [request]
+         (is (= :get (:method request)))
+         (is (= "http://example.com/countries" (:url request)))
+         {:body body :page 1 :per-page 2})]
+      (let [response (send-request "http://example.com/countries")]
+        (is (= body response))
+        (is (= {:page 1 :per-page 2} (meta response)))))))

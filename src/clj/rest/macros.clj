@@ -21,24 +21,24 @@
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
            ~(str pattern# "/edit"))
-         (defn ~name# [& ~'opts]
-           (rest.client/send-request
-            :get (~(symbol (str ns# "/" name# "-url")))))
-         (defn ~singular# [~singular# & ~'opts]
-           (rest.client/send-request
-            :get (~(symbol (str ns# "/" singular# "-url")) ~singular#) ~'opts))
-         (defn ~(symbol (str "create-" singular#)) [~singular# & ~'opts]
-           (rest.client/send-request
-            :post (~(symbol (str ns# "/" name# "-url")))
-            (merge ~'opts {:body ~singular#})))
-         (defn ~(symbol (str "delete-" singular#)) [~singular# & ~'opts]
-           (rest.client/send-request
-            :delete (~(symbol (str ns# "/" singular# "-url")) ~singular#)
-            ~'opts))
-         (defn ~(symbol (str "update-" singular#)) [~singular# & ~'opts]
-           (rest.client/send-request
-            :put (~(symbol (str ns# "/" singular# "-url")) ~singular#)
-            (merge ~'opts {:body ~singular#}))))))
+         (defn ~name# [& {:as ~'opts}]
+           (~'rest.client/send-request
+            (~(symbol (str ns# "/" name# "-url")))))
+         (defn ~singular# [~singular# & {:as ~'opts}]
+           (~'rest.client/send-request
+            (~(symbol (str ns# "/" singular# "-url")) ~singular#) ~'opts))
+         (defn ~(symbol (str "create-" singular#)) [~singular# & {:as ~'opts}]
+           (~'rest.client/send-request
+            (~(symbol (str ns# "/" name# "-url")))
+            (merge {:method :post :body ~singular#} ~'opts)))
+         (defn ~(symbol (str "delete-" singular#)) [~singular# & {:as ~'opts}]
+           (~'rest.client/send-request
+            (~(symbol (str ns# "/" singular# "-url")) ~singular#)
+            (merge {:method :delete} ~'opts)))
+         (defn ~(symbol (str "update-" singular#)) [~singular# & {:as ~'opts}]
+           (~'rest.client/send-request
+            (~(symbol (str ns# "/" singular# "-url")) ~singular#)
+            (merge {:method :put :body ~singular#} ~'opts))))))
 
 (defmacro defverb [verb]
   (let [verb# verb]

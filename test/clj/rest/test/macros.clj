@@ -1,52 +1,46 @@
 (ns rest.test.macros
   (:use rest.client
-        rest.routes
         clojure.test
-        rest.macros)
-  (:import rest.routes.Route))
+        rest.macros))
 
-(def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
-(def spain {:iso-3166-1-alpha-2 "es" :name "Spain"})
+(def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
 (deftest test-defresources
-  (defresources continents [continent]
-    "/continents/:iso-3166-1-alpha-2-:name")
-  (is (= "/continents" (continents-path)))
-  (is (= "/continents/eu-europe" (continent-path europe)))
-  (is (= "/continents/new" (new-continent-path)))
-  (is (= "/continents/eu-europe/edit" (edit-continent-path europe)))
+  (defresources countries [country]
+    "/countries/:iso-3166-1-alpha-2-:name")
+  (is (= "/countries" (countries-path)))
+  (is (= "/countries/de-germany" (country-path germany)))
+  (is (= "/countries/new" (new-country-path)))
+  (is (= "/countries/de-germany/edit" (edit-country-path germany)))
   (with-redefs
     [send-request
-     (fn [method url & [request]]
-       (is (= :get method))
-       (is (= "https://example.com/continents/eu-europe" url))
+     (fn [url & [request]]
+       (is (= "https://example.com/countries/de-germany" url))
        (is (nil? request)))]
-    (continent europe))
+    (country germany))
   (with-redefs
     [send-request
-     (fn [method url & [request]]
-       (is (= :get method))
-       (is (= "https://example.com/continents" url))
+     (fn [url & [request]]
+       (is (= "https://example.com/countries" url))
        (is (nil? request)))]
-    (continents))
+    (countries))
   (with-redefs
     [send-request
-     (fn [method url & [request]]
-       (is (= :post method))
-       (is (= "https://example.com/continents" url))
-       (is (= {:body europe} request)))]
-    (create-continent europe))
+     (fn [url & [request]]
+       (is (= :post (:method request)))
+       (is (= "https://example.com/countries" url))
+       (is (= germany (:body request))))]
+    (create-country germany))
   (with-redefs
     [send-request
-     (fn [method url & [request]]
-       (is (= :put method))
-       (is (= "https://example.com/continents/eu-europe" url))
-       (is (= {:body europe} request)))]
-    (update-continent europe))
+     (fn [url & [request]]
+       (is (= :put (:method request)))
+       (is (= "https://example.com/countries/de-germany" url))
+       (is (= germany (:body request))))]
+    (update-country germany))
   (with-redefs
     [send-request
-     (fn [method url & [request]]
-       (is (= :delete method))
-       (is (= "https://example.com/continents/eu-europe" url))
-       (is (nil? request)))]
-    (delete-continent europe)))
+     (fn [url & [request]]
+       (is (= :delete (:method request)))
+       (is (= "https://example.com/countries/de-germany" url)))]
+    (delete-country germany)))

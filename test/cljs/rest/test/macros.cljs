@@ -1,34 +1,45 @@
 (ns rest.test.macros
-  (:use [rest.routes :only (route)]
-        [rest.util :only (format-pattern parse-keys)])
-  (:use-macros [rest.macros :only (defroute)]))
+  (:require [rest.client :refer [send-request]]
+            [routes.helper :refer [register-route]])
+  (:use-macros [routes.core :only [defroute]]
+               [rest.macros :only [defresources]]))
 
-(def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
-(def spain {:iso-3166-1-alpha-2 "es" :name "Spain"})
+(def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
-(defn test-defroute []
-  (defroute continents []
-    "/continents")
-  (assert (= "/continents" (continents-path)))
-  (assert (= "https://example.com/continents" (continents-url)))
-  (let [route (route :continents)]
-    (assert (= route (continents-route)))
-    (assert (instance? rest.routes.Route route))
-    (assert (= "/continents" (:pattern route)))
-    (assert (= [] (:args route)))
-    (assert (= :continents (:name route)))
-    (assert (= [] (:params route))))
-  (defroute continent [continent]
-    "/continents/:iso-3166-1-alpha-2-:name")
-  (assert (= "/continents/eu-europe" (continent-path europe)))
-  (assert (= "https://example.com/continents/eu-europe" (continent-url europe)))
-  (let [route (route :continent)]
-    (assert (= route (continent-route)))
-    (assert (instance? rest.routes.Route route))
-    (assert (= "/continents/:iso-3166-1-alpha-2-:name" (:pattern route)))
-    (assert (= ['continent] (:args route)))
-    (assert (= :continent (:name route)))
-    (assert (= [[:iso-3166-1-alpha-2 :name]] (:params route)))))
+(defn test-defresources []
+  (defresources countries [country]
+    "/countries/:iso-3166-1-alpha-2-:name")
+  (assert (= "/countries" (countries-path)))
+  (assert (= "/countries/de-germany" (country-path germany)))
+  (assert (= "/countries/new" (new-country-path)))
+  (assert (= "/countries/de-germany/edit" (edit-country-path germany)))
+  (binding [send-request
+            (fn [url & [request]]
+              (assert (= "https://example.com/countries/de-germany" url))
+              (assert (nil? request)))]
+    (country germany))
+  (binding [send-request
+            (fn [url & [request]]
+              (assert (= "https://example.com/countries" url))
+              (assert (nil? request)))]
+    (countries))
+  (binding [send-request
+            (fn [url & [request]]
+              (assert (= :post (:method request)))
+              (assert (= "https://example.com/countries" url))
+              (assert (= germany (:body request))))]
+    (create-country germany))
+  (binding [send-request
+            (fn [url & [request]]
+              (assert (= :put (:method request)))
+              (assert (= "https://example.com/countries/de-germany" url))
+              (assert (= germany (:body request))))]
+    (update-country germany))
+  (binding [send-request
+            (fn [url & [request]]
+              (assert (= :delete (:method request)))
+              (assert (= "https://example.com/countries/de-germany" url)))]
+    (delete-country germany)))
 
 (defn test []
-  (test-defroute))
+  (test-defresources))
