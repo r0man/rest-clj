@@ -46,3 +46,9 @@
        ~(format "Send the `request` with the %s method." (upper-case verb#))
        [~'url & ~'request]
        (apply rest.client/send-request ~(keyword verb#) ~'url ~'request))))
+
+(defmacro with-server
+  "Evaluate `body` with *server* bound to `server`."
+  [server & body]
+  `(routes.core/with-server ~server
+     ~@body))
