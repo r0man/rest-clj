@@ -9,7 +9,7 @@
                  [org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.2"]
                  [routes-clj "0.0.1-SNAPSHOT"]]
-  :plugins [[lein-cljsbuild "0.2.1"]]
+  :plugins [[lein-cljsbuild "0.2.4"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-debug.js"}
                         :source-path "src/cljs"}
