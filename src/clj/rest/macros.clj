@@ -1,16 +1,22 @@
 ;;*CLJSBUILD-MACRO-FILE*;
 (ns rest.macros
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [upper-case replace]]
+  (:require [clojure.string :refer [join split upper-case replace]]
             [inflections.core :refer [singular plural]]
             [rest.client :refer [send-request]]
             [routes.core :refer [defroute]]))
+
+(defn resource-singular [name]
+  (if (= (singular name) name)
+    (let [[resource & rest] (split (str name) #"-")]
+      (join "-" (cons (singular resource) rest)))
+    (singular name)))
 
 (defmacro defresources [name args pattern & {:as options}]
   (let [name# name
         args# args
         pattern# pattern
-        singular# (singular name)
+        singular# (symbol (resource-singular name))
         ns# *ns*]
     `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
            ~(replace pattern# #"/[^/]+$" ""))
@@ -20,24 +26,24 @@
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
            ~(str pattern# "/edit"))
-         (defn ~name# [& {:as ~'opts}]
+         (defn ~name# [~@(rest args#) & {:as ~'opts}]
            (rest.client/send-request
-            (~(symbol (str ns# "/" name# "-url")))))
-         (defn ~singular# [~singular# & {:as ~'opts}]
+            (~(symbol (str ns# "/" name# "-url")) ~@(rest args#))))
+         (defn ~singular# [~@args# & {:as ~'opts}]
            (rest.client/send-request
-            (~(symbol (str ns# "/" singular# "-url")) ~singular#) ~'opts))
-         (defn ~(symbol (str "create-" singular#)) [~singular# & {:as ~'opts}]
+            (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
+         (defn ~(symbol (str "create-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
-            (~(symbol (str ns# "/" name# "-url")))
-            (merge {:method :post :body ~singular#} ~'opts)))
-         (defn ~(symbol (str "delete-" singular#)) [~singular# & {:as ~'opts}]
+            (~(symbol (str ns# "/" name# "-url")) ~@(reverse (rest (reverse args#))))
+            (merge {:method :post :body ~(last args#)} ~'opts)))
+         (defn ~(symbol (str "delete-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
-            (~(symbol (str ns# "/" singular# "-url")) ~singular#)
+            (~(symbol (str ns# "/" singular# "-url")) ~@args#)
             (merge {:method :delete} ~'opts)))
-         (defn ~(symbol (str "update-" singular#)) [~singular# & {:as ~'opts}]
+         (defn ~(symbol (str "update-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
-            (~(symbol (str ns# "/" singular# "-url")) ~singular#)
-            (merge {:method :put :body ~singular#} ~'opts))))))
+            (~(symbol (str ns# "/" singular# "-url")) ~@args#)
+            (merge {:method :put :body ~(last args#)} ~'opts))))))
 
 (defmacro defverb [verb]
   (let [verb# verb]
