@@ -6,7 +6,6 @@
   :min-lein-version "2.0"
   :dependencies [[clj-http "0.4.3"]
                  [cljs-http "0.0.2-SNAPSHOT"]
-                 [inflections "0.7.0-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.2"]
                  [routes-clj "0.0.1-SNAPSHOT"]]
