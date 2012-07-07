@@ -1,13 +1,14 @@
 (ns rest.test.macros
-  (:use rest.client
-        clojure.test
+  (:use clojure.test
+        rest.client
         rest.macros))
 
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
 (deftest test-defresources
-  (defresources countries [country]
-    "/countries/:iso-3166-1-alpha-2-:name")
+  (with-server "https://example.com"
+    (defresources countries [country]
+     "/countries/:iso-3166-1-alpha-2-:name"))
   (is (= "/countries" (countries-path)))
   (is (= "/countries/de-germany" (country-path germany)))
   (is (= "/countries/new" (new-country-path)))

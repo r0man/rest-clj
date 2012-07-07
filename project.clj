@@ -26,8 +26,7 @@
               :crossover-jar true
               :crossover-path ".crossover-cljs"
               :crossovers [rest.core
-                           rest.io
-                           rest.util]
+                           rest.io]
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]

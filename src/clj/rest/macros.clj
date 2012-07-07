@@ -3,9 +3,9 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [upper-case replace]]
             [inflections.core :refer [singular plural]]
-            [rest.util :refer [format-pattern parse-keys]]
-            [routes.core :refer [defroute]]
-            rest.client))
+            [routes.core :as routes]
+            ;; rest.client
+            ))
 
 (defmacro defresources [name args pattern & {:as options}]
   (let [name# name
@@ -13,13 +13,13 @@
         pattern# pattern
         singular# (singular name)
         ns# *ns*]
-    `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
+    `(do (routes/defroute ~name# [~@(reverse (rest (reverse args#)))]
            ~(replace pattern# #"/[^/]+$" ""))
-         (defroute ~singular# [~@args#]
+         (routes/defroute ~singular# [~@args#]
            ~pattern#)
-         (defroute ~(symbol (str "new-" singular#)) []
+         (routes/defroute ~(symbol (str "new-" singular#)) []
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
-         (defroute ~(symbol (str "edit-" singular#)) [~@args#]
+         (routes/defroute ~(symbol (str "edit-" singular#)) [~@args#]
            ~(str pattern# "/edit"))
          (defn ~name# [& {:as ~'opts}]
            (~'rest.client/send-request
@@ -50,5 +50,5 @@
 (defmacro with-server
   "Evaluate `body` with *server* bound to `server`."
   [server & body]
-  `(routes.core/with-server ~server
+  `(routes/with-server ~server
      ~@body))

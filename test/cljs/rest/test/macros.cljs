@@ -1,14 +1,16 @@
 (ns rest.test.macros
   (:require [rest.client :refer [send-request]]
+            [routes.server :refer [*server*]]
             [routes.helper :refer [register-route]])
-  (:use-macros [routes.core :only [defroute]]
-               [rest.macros :only [defresources]]))
+  (:use-macros [rest.macros :only [defresources with-server]]
+               [routes.core :only [defroute]]))
 
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
 (defn test-defresources []
-  (defresources countries [country]
-    "/countries/:iso-3166-1-alpha-2-:name")
+  (with-server "https://example.com"
+    (defresources countries [country]
+      "/countries/:iso-3166-1-alpha-2-:name"))
   (assert (= "/countries" (countries-path)))
   (assert (= "/countries/de-germany" (country-path germany)))
   (assert (= "/countries/new" (new-country-path)))
