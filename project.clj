@@ -1,4 +1,4 @@
-(defproject rest-clj "0.0.1-SNAPSHOT"
+(defproject rest-clj "0.0.2-SNAPSHOT"
   :description "A HTTP REST library for Clojure."
   :url "http://github.com/r0man/rest-clj"
   :license {:name "Eclipse Public License"
