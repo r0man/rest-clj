@@ -12,6 +12,10 @@
       (join "-" (cons (singular resource) rest)))
     (singular name)))
 
+(defn route-args [args]
+  (if (> (count args) 1)
+    (butlast args) args))
+
 (defmacro defresources [name args pattern & {:as options}]
   (let [name# name
         args# args
