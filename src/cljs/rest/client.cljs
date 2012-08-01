@@ -23,7 +23,9 @@
    :else (throw (js/Error (str "Can't create Ring request map from: " (prn-str m))))))
 
 (defn- parse-string [s]
-  (assoc (client/parse-url s) :request-method :get))
+  (assoc (client/parse-url s)
+    :body {}
+    :request-method :get))
 
 (defn send-request
   "Send the HTTP request via *client*."

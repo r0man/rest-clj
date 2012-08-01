@@ -18,18 +18,12 @@
     (assert (= :get (:request-method request)))
     (assert (= :http (:scheme request)))
     (assert (= "example.com" (:server-name request)))
-    (assert (= "/continents/eu-europe" (:uri request))))
-  (let [request (client/to-request (goog.Uri. europe))]
-    (assert (= :get (:request-method request)))
-    (assert (= :http (:scheme request)))
-    (assert (= "example.com" (:server-name request)))
-    (assert (= "/continents/eu-europe" (:uri request))))
-  (let [request (client/to-request {:uri europe})]
-    (assert (= :get (:request-method request)))
-    (assert (= :http (:scheme request)))
-    (assert (= "example.com" (:server-name request)))
     (assert (= "/continents/eu-europe" (:uri request)))
-    (assert (= request (client/to-request request)))))
+    (assert (= {} (:body request))))
+  (assert (= (client/to-request europe)
+             (client/to-request {:uri europe})))
+  (assert (= (client/to-request europe)
+             (client/to-request (goog.Uri. europe)))))
 
 (defn test []
   (test-send-request)
