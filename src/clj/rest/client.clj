@@ -22,7 +22,9 @@
    :else (throw (Exception. (str "Can't create Ring request map from: " (prn-str m))))))
 
 (defn- parse-string [s]
-  (assoc (client/parse-url s) :request-method :get))
+  (assoc (client/parse-url s)
+    :body {}
+    :request-method :get))
 
 (defn send-request
   "Send the HTTP request via *client*."
@@ -46,6 +48,9 @@
 
   java.lang.String
   (to-request [s] (parse-string s))
+
+  java.net.URL
+  (to-request [u] (parse-string (str u)))
 
   java.net.URI
   (to-request [u] (parse-string (str u))))
