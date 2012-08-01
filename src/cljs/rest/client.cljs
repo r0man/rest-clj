@@ -14,7 +14,7 @@
 (defn send-request
   "Send the HTTP request via *client*."
   [url & [method request]]
-  (*client* (merge {:request-method (or method :get) :url url} request)))
+  (*client* (merge {:request-method (or method :get) :uri url} request)))
 
 (extend-type string
   IRequest

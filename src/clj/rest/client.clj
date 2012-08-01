@@ -14,7 +14,7 @@
 (defn send-request
   "Send the HTTP request via *client*."
   [url & [request]]
-  (let [response (*client* (merge {:request-method :get :url url} request))]
+  (let [response (*client* (merge {:request-method :get :uri url} request))]
     (if (instance? clojure.lang.IMeta (:body response))
       (with-meta (:body response)
         (dissoc response :body))
@@ -30,3 +30,11 @@
   IRequest
   (to-request [s]
     (client/parse-url s)))
+
+(extend-protocol IRequest
+  clojure.lang.IPersistentMap
+  (to-request [m]
+    (let [url (:uri m)]
+      (assert url (str "Can't build request without an uri: " (prn-str m)))
+      (-> (client/parse-url (str url))
+          (assoc :body (dissoc m :uri))))))
