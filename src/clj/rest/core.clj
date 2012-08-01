@@ -22,8 +22,7 @@
         pattern# pattern
         singular# (symbol (resource-singular name))
         singular-url# (symbol (str *ns* "/" singular# "-url"))
-        plural-url# (symbol (str *ns* "/" name# "-url"))
-        ns# *ns*]
+        plural-url# (symbol (str *ns* "/" name# "-url"))]
     `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
            ~(replace pattern# #"/[^/]+$" ""))
 
