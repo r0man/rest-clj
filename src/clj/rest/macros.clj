@@ -22,33 +22,44 @@
         args# args
         pattern# pattern
         singular# (symbol (resource-singular name))
+        singular-url# (symbol (str *ns* "/" singular# "-url"))
+        plural-url# (symbol (str *ns* "/" name# "-url"))
         ns# *ns*]
     `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
            ~(replace pattern# #"/[^/]+$" ""))
+
          (defroute ~singular# [~@args#]
            ~pattern#)
+
          (defroute ~(symbol (str "new-" singular#)) []
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
+
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
            ~(str pattern# "/edit"))
+
          (defn ~name# [~@(rest args#) & [~'opts]]
-           (rest.http/get (~(symbol (str ns# "/" name# "-url")) ~@(rest args#)) ~'opts))
+           (rest.http/get (~plural-url# ~@(rest args#)) ~'opts))
+
          (defn ~singular# [~@args# & [~'opts]]
-           (rest.http/get (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
+           (rest.http/get (~singular-url# ~@args#) ~'opts))
+
          (defn ~(symbol (str "create-" singular#)) [~@args# & [{:as ~'opts}]]
            (rest.http/post
-            (~(symbol (str ns# "/" name# "-url")) ~@(reverse (rest (reverse args#))))
+            (~plural-url# ~@(reverse (rest (reverse args#))))
             (assoc ~'opts :body ~(last args#))))
+
          (defn ~(symbol (str "delete-" singular#)) [~@args# & [~'opts]]
-           (rest.http/delete (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
+           (rest.http/delete (~singular-url# ~@args#) ~'opts))
+
          (defn ~(symbol (str "update-" singular#)) [~@args# & [{:as ~'opts}]]
            (rest.http/put
-            (~(symbol (str ns# "/" singular# "-url")) ~@args#)
+            (~singular-url# ~@args#)
             (assoc ~'opts :body ~(last args#))))
+
          (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
            (let [response#
                  (rest.http/head
-                  (~(symbol (str ns# "/" singular# "-url")) ~@args#)
+                  (~singular-url# ~@args#)
                   ~'opts)]
              (= 200 (:status response#)))))))
 
