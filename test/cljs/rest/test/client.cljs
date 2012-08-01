@@ -1,5 +1,6 @@
 (ns rest.test.client
-  (:require [rest.client :as client]))
+  (:require [goog.Uri :as uri]
+            [rest.client :as client]))
 
 (def europe "http://example.com/continents/eu-europe")
 
@@ -14,6 +15,11 @@
 
 (defn test-to-request []
   (let [request (client/to-request europe)]
+    (assert (= :get (:request-method request)))
+    (assert (= :http (:scheme request)))
+    (assert (= "example.com" (:server-name request)))
+    (assert (= "/continents/eu-europe" (:uri request))))
+  (let [request (client/to-request (goog.Uri. europe))]
     (assert (= :get (:request-method request)))
     (assert (= :http (:scheme request)))
     (assert (= "example.com" (:server-name request)))

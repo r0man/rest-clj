@@ -1,6 +1,7 @@
 (ns rest.client
   (:require [cljs-http.client :as client]
             [clojure.string :refer [blank?]]
+            [goog.Uri :as uri]
             [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]))
 
 (defprotocol IRequest
@@ -43,5 +44,8 @@
   cljs.core.PersistentHashMap
   (to-request [m] (parse-map m))
 
+  goog.Uri
+  (to-request [uri] (parse-string (str uri)))
+  
   string
   (to-request [s] (parse-string s)))
