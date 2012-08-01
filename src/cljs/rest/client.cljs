@@ -27,10 +27,11 @@
     :body {}
     :request-method :get))
 
-(defn send-request
-  "Send the HTTP request via *client*."
-  [url & [method request]]
-  (*client* (merge {:request-method (or method :get) :uri url} request)))
+(defn send-request [method request & [options]]
+  (-> (to-request request)
+      (merge options)
+      (assoc :request-method method)
+      (*client*)))
 
 (extend-protocol IRequest
 
@@ -48,6 +49,6 @@
 
   goog.Uri
   (to-request [uri] (parse-string (str uri)))
-  
+
   string
   (to-request [s] (parse-string s)))

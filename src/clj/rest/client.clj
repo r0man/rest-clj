@@ -1,7 +1,8 @@
 (ns rest.client
   (:require [clj-http.client :as client]
             [clojure.string :refer [blank?]]
-            [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]))
+            [rest.io :refer [wrap-accept wrap-response-as-meta]]
+            [rest.io :refer [wrap-input-coercion wrap-output-coercion]]))
 
 (defprotocol IRequest
   (to-request [obj] "Make a Ring request map from `obj`."))
@@ -10,7 +11,8 @@
   (-> client/request
       wrap-accept
       wrap-input-coercion
-      wrap-output-coercion))
+      wrap-output-coercion
+      wrap-response-as-meta))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]
   (cond
@@ -26,14 +28,11 @@
     :body {}
     :request-method :get))
 
-(defn send-request
-  "Send the HTTP request via *client*."
-  [url & [request]]
-  (let [response (*client* (merge {:request-method :get :uri url} request))]
-    (if (instance? clojure.lang.IMeta (:body response))
-      (with-meta (:body response)
-        (dissoc response :body))
-      response)))
+(defn send-request [method request & [options]]
+  (-> (to-request request)
+      (merge options)
+      (assoc :request-method method)
+      (*client*)))
 
 (defmacro with-client
   "Evaluate `body` with *client* bound to `client`."

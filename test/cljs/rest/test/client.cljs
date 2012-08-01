@@ -9,9 +9,10 @@
     (binding [client/*client*
               (fn [request]
                 (assert (= :get (:request-method request)))
-                (assert (= "http://example.com/countries" (:uri request)))
-                {:body body :page 1 :per-page 2})]
-      (client/send-request "http://example.com/countries"))))
+                (assert (= :http (:scheme request)))
+                (assert (= "example.com" (:server-name request)))
+                (assert (= "/countries" (:uri request))))]
+      (client/send-request :get "http://example.com/countries"))))
 
 (defn test-to-request []
   (let [request (client/to-request europe)]
