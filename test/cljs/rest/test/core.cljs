@@ -1,8 +1,8 @@
-(ns rest.test.macros
+(ns rest.test.core
   (:require [rest.client :refer [*client* send-request]]
             [routes.server :refer [example *server*]]
             [routes.helper :refer [register-route]])
-  (:use-macros [rest.macros :only [defresources with-server]]
+  (:use-macros [rest.core :only [defresources with-server]]
                [routes.core :only [defroute]]))
 
 (def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})

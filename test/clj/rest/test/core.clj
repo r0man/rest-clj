@@ -1,7 +1,7 @@
-(ns rest.test.macros
+(ns rest.test.core
   (:use clojure.test
         rest.client
-        rest.macros))
+        rest.core))
 
 (def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})

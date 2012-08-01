@@ -1,5 +1,5 @@
 ;;*CLJSBUILD-MACRO-FILE*;
-(ns rest.macros
+(ns rest.core
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [join split upper-case replace]]
             [inflections.core :refer [singular plural]]
