@@ -4,7 +4,7 @@
    [clojure.string :refer [blank? replace]]
    [rest.json :refer [json-str read-json]]))
 
-(def ^:dynamic *accept* "application/json")
+(def ^:dynamic *content-type* "application/json")
 
 (defn content-type
   "Returns the value of the Content-Type header of `request`."
@@ -34,7 +34,7 @@
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
-  (fn [request] (or (content-type request) *accept*)))
+  (fn [request] (keyword (or (content-type request) *content-type*))))
 
 (defmethod serialize :default
   [request] request)
@@ -53,8 +53,9 @@
         (assoc-in [:headers "content-type"] "application/json"))
     request))
 
-(defn wrap-accept [handler]
-  #(handler (assoc-in %1 [:headers "Accept"] *accept*)))
+(defn wrap-accept [handler & [content-type]]
+  (let [content-type (or content-type *content-type*)]
+    #(handler (assoc-in %1 [:headers "Accept"] content-type))))
 
 (defn wrap-input-coercion [handler]
   #(handler (serialize %1)))

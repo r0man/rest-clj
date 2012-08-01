@@ -25,9 +25,18 @@
   (is (nil? (serialize nil)))
   (is (= {} (serialize {})))
   (let [body {:a 1 :b 2}]
+    (let [request (serialize {:body body})]
+      (is (= :application/json (content-type request)))
+      (is (= (json-str body) (:body request))))
     (let [request (serialize {:body body :headers {"content-type" "application/clojure"}})]
       (is (= :application/clojure (content-type request)))
       (is (= (prn-str body) (:body request))))
     (let [request (serialize {:body body :headers {"content-type" "application/json"}})]
       (is (= :application/json (content-type request)))
       (is (= (json-str body) (:body request))))))
+
+(deftest test-wrap-accept
+  (is (= {:body {} :headers {"Accept" "application/json"}}
+         ((wrap-accept identity) {:body {}})))
+  (is (= {:body {} :headers {"Accept" "application/clojure"}}
+         ((wrap-accept identity "application/clojure") {:body {}}))))
