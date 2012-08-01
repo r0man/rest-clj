@@ -19,7 +19,7 @@
                        {:compiler {:output-to "target/rest-debug.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-path "test/cljs"}
+                        :source-path "src/cljs"}
                        {:compiler {:output-to "target/rest.js"
                                    :optimizations :advanced
                                    :pretty-print true}
