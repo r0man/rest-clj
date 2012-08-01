@@ -54,12 +54,21 @@
     request))
 
 (defn wrap-accept [handler]
-  (fn [request]
-    (handler (assoc-in request [:headers "Accept"] *accept*))))
+  #(handler (assoc-in %1 [:headers "Accept"] *accept*)))
 
 (defn wrap-input-coercion [handler]
-  (fn [request] (handler (serialize request))))
+  #(handler (serialize %1)))
 
 (defn wrap-output-coercion [handler]
-  (fn [request]
-    (deserialize (handler request))))
+  #(deserialize (handler %1)))
+
+(defn wrap-response-as-meta [handler]
+  #(let [response (handler %1)]
+     (if (instance? clojure.lang.IMeta (:body response))
+       (with-meta (:body response)
+         (dissoc response :body))
+       response)))
+
+(defn wrap-response-as-vector [handler]
+  #(let [response (handler %1)]
+     [(:body response) (dissoc response :body)]))

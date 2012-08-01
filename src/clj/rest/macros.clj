@@ -39,15 +39,20 @@
          (defn ~(symbol (str "create-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
             (~(symbol (str ns# "/" name# "-url")) ~@(reverse (rest (reverse args#))))
-            (merge {:method :post :body ~(last args#)} ~'opts)))
+            (merge {:request-method :post :body ~(last args#)} ~'opts)))
          (defn ~(symbol (str "delete-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
             (~(symbol (str ns# "/" singular# "-url")) ~@args#)
-            (merge {:method :delete} ~'opts)))
+            (merge {:request-method :delete} ~'opts)))
          (defn ~(symbol (str "update-" singular#)) [~@args# & {:as ~'opts}]
            (rest.client/send-request
             (~(symbol (str ns# "/" singular# "-url")) ~@args#)
-            (merge {:method :put :body ~(last args#)} ~'opts))))))
+            (merge {:request-method :put :body ~(last args#)} ~'opts)))
+         (defn ~(symbol (str "new-" singular# "?")) [~@args# & {:as ~'opts}]
+           (if-let [response# (rest.client/send-request
+                              (~(symbol (str ns# "/" singular# "-url")) ~@args#)
+                              (merge {:request-method :head} ~'opts))]
+             (= 200 (:status (meta response#))))))))
 
 (defmacro defverb [verb]
   (let [verb# verb]

@@ -2,6 +2,9 @@
   (:require [clj-http.client :as client]
             [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]))
 
+(defprotocol IRequest
+  (to-request [obj] "Make a Ring request map from `obj`."))
+
 (def ^:dynamic *client*
   (-> client/request
       wrap-accept
@@ -11,7 +14,7 @@
 (defn send-request
   "Send the HTTP request via *client*."
   [url & [request]]
-  (let [response (*client* (merge {:method :get :url url} request))]
+  (let [response (*client* (merge {:request-method :get :url url} request))]
     (if (instance? clojure.lang.IMeta (:body response))
       (with-meta (:body response)
         (dissoc response :body))
@@ -23,4 +26,7 @@
   `(binding [*client* ~client]
      ~@body))
 
-(comment (map :name (send-request "http://api.burningswell.dev/spots")))
+(extend-type String
+  IRequest
+  (to-request [s]
+    (client/parse-url s)))

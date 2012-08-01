@@ -50,7 +50,7 @@
 (defn test-create-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :post (:method request)))
+              (assert (= :post (:request-method request)))
               (assert (= "https://example.com/continents" url))
               (assert (= europe (:body request))))]
     (create-continent europe)))
@@ -58,7 +58,7 @@
 (defn test-update-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :put (:method request)))
+              (assert (= :put (:request-method request)))
               (assert (= (continent-url europe) url))
               (assert (= europe (:body request))))]
     (update-continent europe)))
@@ -66,7 +66,7 @@
 (defn test-delete-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :delete (:method request)))
+              (assert (= :delete (:request-method request)))
               (assert (= (continent-url europe) url)))]
     (delete-continent europe)))
 
@@ -101,7 +101,7 @@
 (defn test-create-country []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :post (:method request)))
+              (assert (= :post (:request-method request)))
               (assert (= "https://example.com/countries" url))
               (assert (= germany (:body request))))]
     (create-country germany)))
@@ -109,7 +109,7 @@
 (defn test-update-country []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :put (:method request)))
+              (assert (= :put (:request-method request)))
               (assert (= (country-url germany) url))
               (assert (= germany (:body request))))]
     (update-country germany)))
@@ -117,7 +117,7 @@
 (defn test-delete-country []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :delete (:method request)))
+              (assert (= :delete (:request-method request)))
               (assert (= (country-url germany) url)))]
     (delete-country germany)))
 
@@ -144,7 +144,7 @@
 (defn test-create-country-in-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :post (:method request)))
+              (assert (= :post (:request-method request)))
               (assert (= (countries-in-continent-url europe) url))
               (assert (= germany (:body request))))]
     (create-country-in-continent europe germany)))
@@ -152,7 +152,7 @@
 (defn test-update-country-in-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :put (:method request)))
+              (assert (= :put (:request-method request)))
               (assert (= (country-in-continent-url europe germany) url))
               (assert (= germany (:body request))))]
     (update-country-in-continent europe germany)))
@@ -160,7 +160,7 @@
 (defn test-delete-country-in-continent []
   (binding [send-request
             (fn [url & [request]]
-              (assert (= :delete (:method request)))
+              (assert (= :delete (:request-method request)))
               (assert (= (country-in-continent-url europe germany) url)))]
     (delete-country-in-continent europe germany)))
 

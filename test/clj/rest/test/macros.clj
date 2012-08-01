@@ -51,7 +51,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :post (:method request)))
+       (is (= :post (:request-method request)))
        (is (= "https://example.com/continents" url))
        (is (= europe (:body request))))]
     (create-continent europe)))
@@ -60,7 +60,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :put (:method request)))
+       (is (= :put (:request-method request)))
        (is (= (continent-url europe) url))
        (is (= europe (:body request))))]
     (update-continent europe)))
@@ -69,7 +69,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :delete (:method request)))
+       (is (= :delete (:request-method request)))
        (is (= (continent-url europe) url)))]
     (delete-continent europe)))
 
@@ -107,7 +107,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :post (:method request)))
+       (is (= :post (:request-method request)))
        (is (= "https://example.com/countries" url))
        (is (= germany (:body request))))]
     (create-country germany)))
@@ -116,7 +116,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :put (:method request)))
+       (is (= :put (:request-method request)))
        (is (= (country-url germany) url))
        (is (= germany (:body request))))]
     (update-country germany)))
@@ -125,7 +125,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :delete (:method request)))
+       (is (= :delete (:request-method request)))
        (is (= (country-url germany) url)))]
     (delete-country germany)))
 
@@ -155,7 +155,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :post (:method request)))
+       (is (= :post (:request-method request)))
        (is (= (countries-in-continent-url europe) url))
        (is (= germany (:body request))))]
     (create-country-in-continent europe germany)))
@@ -164,7 +164,7 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :put (:method request)))
+       (is (= :put (:request-method request)))
        (is (= (country-in-continent-url europe germany) url))
        (is (= germany (:body request))))]
     (update-country-in-continent europe germany)))
@@ -173,6 +173,6 @@
   (with-redefs
     [send-request
      (fn [url & [request]]
-       (is (= :delete (:method request)))
+       (is (= :delete (:request-method request)))
        (is (= (country-in-continent-url europe germany) url)))]
     (delete-country-in-continent europe germany)))
