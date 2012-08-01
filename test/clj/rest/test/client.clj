@@ -3,6 +3,8 @@
   (:use clojure.test
         rest.client))
 
+(def europe "http://example.com/continents/eu-europe")
+
 (deftest test-send-request
   (let [body [{:name "Germany"} {:name "Spain"}]]
     (with-redefs
@@ -16,8 +18,14 @@
         (is (= {:page 1 :per-page 2} (meta response)))))))
 
 (deftest test-to-request
-  (let [url "http://api.burningswell.com/continents/eu-europe"]
-    (is (= (client/parse-url url)
-           (to-request url)))
-    (is (= (assoc (client/parse-url url) :body {:name "Europe"})
-           (to-request {:name "Europe" :uri url})))))
+  (let [request (to-request europe)]
+    (is (= :get (:request-method request)))
+    (is (= :http (:scheme request)))
+    (is (= "example.com" (:server-name request)))
+    (is (= "/continents/eu-europe" (:uri request))))
+  (let [request (to-request {:uri europe})]
+    (is (= :get (:request-method request)))
+    (is (= :http (:scheme request)))
+    (is (= "example.com" (:server-name request)))
+    (is (= "/continents/eu-europe" (:uri request)))
+    (is (= request (to-request request)))))

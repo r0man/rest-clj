@@ -1,5 +1,6 @@
 (ns rest.client
   (:require [clj-http.client :as client]
+            [clojure.string :refer [blank?]]
             [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]))
 
 (defprotocol IRequest
@@ -29,12 +30,16 @@
 (extend-type String
   IRequest
   (to-request [s]
-    (client/parse-url s)))
+    (assoc (client/parse-url s)
+      :request-method :get)))
 
 (extend-protocol IRequest
   clojure.lang.IPersistentMap
-  (to-request [m]
-    (let [url (:uri m)]
-      (assert url (str "Can't build request without an uri: " (prn-str m)))
-      (-> (client/parse-url (str url))
-          (assoc :body (dissoc m :uri))))))
+  (to-request [{:keys [server-name uri] :as m}]
+    (cond
+     (and server-name uri) m
+     (not (blank? uri))
+     (assoc (client/parse-url uri)
+       :body (dissoc m :uri)
+       :request-method :get)
+     :else (throw (Exception. (str "Can't create Ring request map from: " (prn-str m)))))))
