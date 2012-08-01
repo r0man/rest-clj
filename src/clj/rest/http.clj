@@ -1,6 +1,6 @@
 (ns rest.http
   (:refer-clojure :exclude [get])
-  (:require [rest.client :refer [send-request to-request]]))
+  (:require [rest.client :refer [send-request]]))
 
 (defn delete
   "Send an HTTP delete request."
