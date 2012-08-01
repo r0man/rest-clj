@@ -4,40 +4,40 @@
 
 (defn delete
   "Send an HTTP delete request."
-  [url & [options]]
-  (send-request :delete url options))
+  [request & [options]]
+  (send-request :delete request options))
 
 (defn get
   "Send an HTTP get request."
-  [url & [options]]
-  (send-request :get url options))
+  [request & [options]]
+  (send-request :get request options))
 
 (defn head
   "Send an HTTP head request."
-  [url & [options]]
-  (send-request :head url options))
+  [request & [options]]
+  (send-request :head request options))
 
 (defn move
   "Send an HTTP move request."
-  [url & [options]]
-  (send-request :move url options))
+  [request & [options]]
+  (send-request :move request options))
 
 (defn options
   "Send an HTTP options request."
-  [url & [options]]
-  (send-request :options url options))
+  [request & [options]]
+  (send-request :options request options))
 
 (defn patch
   "Send an HTTP patch request."
-  [url & [options]]
-  (send-request :patch url options))
+  [request & [options]]
+  (send-request :patch request options))
 
 (defn post
   "Send an HTTP post request."
-  [url & [options]]
-  (send-request :post url options))
+  [request & [options]]
+  (send-request :post request options))
 
 (defn put
   "Send an HTTP put request."
-  [url & [options]]
-  (send-request :put url options))
+  [request & [options]]
+  (send-request :put request options))
