@@ -4,6 +4,7 @@
   (:require [clojure.string :refer [join split upper-case replace]]
             [inflections.core :refer [singular plural]]
             [rest.client :refer [send-request]]
+            [rest.http :as http]
             [routes.core :refer [defroute]]))
 
 (defn resource-singular [name]
@@ -30,29 +31,26 @@
            ~(str (replace pattern# #"/[^/]+$" "") "/new"))
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
            ~(str pattern# "/edit"))
-         (defn ~name# [~@(rest args#) & {:as ~'opts}]
-           (rest.client/send-request
-            (~(symbol (str ns# "/" name# "-url")) ~@(rest args#))))
-         (defn ~singular# [~@args# & {:as ~'opts}]
-           (rest.client/send-request
-            (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
-         (defn ~(symbol (str "create-" singular#)) [~@args# & {:as ~'opts}]
-           (rest.client/send-request
+         (defn ~name# [~@(rest args#) & [~'opts]]
+           (rest.http/get (~(symbol (str ns# "/" name# "-url")) ~@(rest args#)) ~'opts))
+         (defn ~singular# [~@args# & [~'opts]]
+           (rest.http/get (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
+         (defn ~(symbol (str "create-" singular#)) [~@args# & [{:as ~'opts}]]
+           (rest.http/post
             (~(symbol (str ns# "/" name# "-url")) ~@(reverse (rest (reverse args#))))
-            (merge {:request-method :post :body ~(last args#)} ~'opts)))
-         (defn ~(symbol (str "delete-" singular#)) [~@args# & {:as ~'opts}]
-           (rest.client/send-request
+            (assoc ~'opts :body ~(last args#))))
+         (defn ~(symbol (str "delete-" singular#)) [~@args# & [~'opts]]
+           (rest.http/delete (~(symbol (str ns# "/" singular# "-url")) ~@args#) ~'opts))
+         (defn ~(symbol (str "update-" singular#)) [~@args# & [{:as ~'opts}]]
+           (rest.http/put
             (~(symbol (str ns# "/" singular# "-url")) ~@args#)
-            (merge {:request-method :delete} ~'opts)))
-         (defn ~(symbol (str "update-" singular#)) [~@args# & {:as ~'opts}]
-           (rest.client/send-request
-            (~(symbol (str ns# "/" singular# "-url")) ~@args#)
-            (merge {:request-method :put :body ~(last args#)} ~'opts)))
-         (defn ~(symbol (str "new-" singular# "?")) [~@args# & {:as ~'opts}]
-           (if-let [response# (rest.client/send-request
-                              (~(symbol (str ns# "/" singular# "-url")) ~@args#)
-                              (merge {:request-method :head} ~'opts))]
-             (= 200 (:status (meta response#))))))))
+            (assoc ~'opts :body ~(last args#))))
+         (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
+           (let [response#
+                 (rest.http/head
+                  (~(symbol (str ns# "/" singular# "-url")) ~@args#)
+                  ~'opts)]
+             (= 200 (:status response#)))))))
 
 (defmacro defverb [verb]
   (let [verb# verb]
