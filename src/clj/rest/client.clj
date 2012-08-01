@@ -45,4 +45,7 @@
   (to-request [m] (parse-map m))
 
   java.lang.String
-  (to-request [s] (parse-string s)))
+  (to-request [s] (parse-string s))
+
+  java.net.URI
+  (to-request [u] (parse-string (str u))))

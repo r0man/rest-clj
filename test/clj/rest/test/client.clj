@@ -28,4 +28,6 @@
     (is (= :http (:scheme request)))
     (is (= "example.com" (:server-name request)))
     (is (= "/continents/eu-europe" (:uri request)))
-    (is (= request (to-request request)))))
+    (is (= request (to-request request))))
+  (is (= (to-request europe)
+         (to-request (java.net.URI. europe)))))
