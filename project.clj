@@ -12,8 +12,7 @@
   :plugins [[lein-cljsbuild "0.2.4"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
-                                   :optimizations :whitespace
-                                   ;; :optimizations :advanced
+                                   :optimizations :advanced
                                    :pretty-print true}
                         :source-path "test/cljs"}
                        {:compiler {:output-to "target/rest-debug.js"
