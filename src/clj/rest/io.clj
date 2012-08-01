@@ -36,9 +36,6 @@
   "Serialize the body of `response` according to the Content-Type header."
   (fn [request] (keyword (or (content-type request) *content-type*))))
 
-(defmethod serialize :default
-  [request] request)
-
 (defmethod serialize :application/clojure
   [{:keys [body] :as request}]
   (if body
@@ -46,7 +43,7 @@
         (assoc-in [:headers "content-type"] "application/clojure"))
     request))
 
-(defmethod serialize :application/json
+(defmethod serialize :default
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] json-str)
