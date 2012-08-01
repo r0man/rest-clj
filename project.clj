@@ -26,8 +26,7 @@
                         :jar true}]
               :crossover-jar true
               :crossover-path ".crossover-cljs"
-              :crossovers [rest.core
-                           rest.http
+              :crossovers [rest.http
                            rest.io]
               :repl-listen-port 9000
               :repl-launch-commands

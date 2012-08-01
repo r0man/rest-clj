@@ -3,17 +3,16 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [join split upper-case replace]]
             [inflections.core :refer [singular plural]]
-            [rest.client :refer [send-request]]
             [rest.http :as http]
             [routes.core :refer [defroute]]))
 
-(defn resource-singular [name]
+(defn- resource-singular [name]
   (if (= (singular name) name)
     (let [[resource & rest] (split (str name) #"-")]
       (join "-" (cons (singular resource) rest)))
     (singular name)))
 
-(defn route-args [args]
+(defn- route-args [args]
   (if (> (count args) 1)
     (butlast args) args))
 
@@ -38,37 +37,30 @@
            ~(str pattern# "/edit"))
 
          (defn ~name# [~@(rest args#) & [~'opts]]
-           (rest.http/get (~plural-url# ~@(rest args#)) ~'opts))
+           (http/get (~plural-url# ~@(rest args#)) ~'opts))
 
          (defn ~singular# [~@args# & [~'opts]]
-           (rest.http/get (~singular-url# ~@args#) ~'opts))
+           (http/get (~singular-url# ~@args#) ~'opts))
 
          (defn ~(symbol (str "create-" singular#)) [~@args# & [{:as ~'opts}]]
-           (rest.http/post
+           (http/post
             (~plural-url# ~@(reverse (rest (reverse args#))))
             (assoc ~'opts :body ~(last args#))))
 
          (defn ~(symbol (str "delete-" singular#)) [~@args# & [~'opts]]
-           (rest.http/delete (~singular-url# ~@args#) ~'opts))
+           (http/delete (~singular-url# ~@args#) ~'opts))
 
          (defn ~(symbol (str "update-" singular#)) [~@args# & [{:as ~'opts}]]
-           (rest.http/put
+           (http/put
             (~singular-url# ~@args#)
             (assoc ~'opts :body ~(last args#))))
 
          (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
            (let [response#
-                 (rest.http/head
+                 (http/head
                   (~singular-url# ~@args#)
                   ~'opts)]
              (= 200 (:status response#)))))))
-
-(defmacro defverb [verb]
-  (let [verb# verb]
-    `(defn ~verb#
-       ~(format "Send the `request` with the %s method." (upper-case verb#))
-       [~'url & ~'request]
-       (apply rest.client/send-request ~(keyword verb#) ~'url ~'request))))
 
 (defmacro with-server
   "Evaluate `body` with *server* bound to `server`."
