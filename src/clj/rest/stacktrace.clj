@@ -26,13 +26,20 @@
    (format-class trace-elem)
    (format-method trace-elem)
    (:file trace-elem)
-   (or (:line trace-elem) 0)))
+   (or (:line trace-elem) -1)))
 
 (defn make-throwable
   "Make a Throwable from a clj-stacktrace exception map."
   [exception]
   (let [elements (map make-trace-element (:trace-elems exception))]
-    (doto (Exception. (:message exception))
+    (doto (try
+            (clojure.lang.Reflector/invokeConstructor
+             (resolve (symbol (if (class? (:class exception))
+                                (.getName (:class exception))
+                                (str (:class exception)))))
+             (to-array [(:message exception)]))
+            (catch Exception _
+              (Throwable. (:message exception))))
       (.setStackTrace (into-array StackTraceElement elements)))))
 
 (defn wrap-stacktrace-client
