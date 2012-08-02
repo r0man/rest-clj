@@ -1,5 +1,6 @@
 (ns rest.json
-  (:require [goog.json :as j]))
+  (:require [clojure.string :refer [blank?]]
+            [goog.json :as j]))
 
 (defn json-str
   "Serialize `arg` into a JSON string."
@@ -10,6 +11,7 @@
   the fn uses eval so it is open to security issues and it should only
   be used if you trust the source."
   [s & {:keys [unsafe]}]
-  (if unsafe
-    (j/unsafeParse s)
-    (j/parse s)))
+  (if-not (blank? s)
+    (if unsafe
+      (j/unsafeParse s)
+      (j/parse s))))

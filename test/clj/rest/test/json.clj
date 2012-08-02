@@ -10,4 +10,5 @@
 
 (deftest test-read-json
   (is (nil? (read-json nil)))
+  (is (nil? (read-json "")))
   (is (= 1 (read-json "1"))))
