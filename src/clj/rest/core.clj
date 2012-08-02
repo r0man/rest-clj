@@ -24,16 +24,20 @@
         singular-url# (symbol (str *ns* "/" singular# "-url"))
         plural-url# (symbol (str *ns* "/" name# "-url"))]
     `(do (defroute ~name# [~@(reverse (rest (reverse args#)))]
-           ~(replace pattern# #"/[^/]+$" ""))
+           ~(replace pattern# #"/[^/]+$" "")
+           :server ~(:server options))
 
          (defroute ~singular# [~@args#]
-           ~pattern#)
+           ~pattern#
+           :server ~(:server options))
 
          (defroute ~(symbol (str "new-" singular#)) []
-           ~(str (replace pattern# #"/[^/]+$" "") "/new"))
+           ~(str (replace pattern# #"/[^/]+$" "") "/new")
+           :server ~(:server options))
 
          (defroute ~(symbol (str "edit-" singular#)) [~@args#]
-           ~(str pattern# "/edit"))
+           ~(str pattern# "/edit")
+           :server ~(:server options))
 
          (defn ~name# [~@(rest args#) & [~'opts]]
            (http/get (~plural-url# ~@(rest args#)) ~'opts))

@@ -8,16 +8,24 @@
 (def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
-(with-server "https://example.com"
+(def german {:iso-639-1 "de" :name "German"})
+
+(with-server example
 
   (defresources continents [country]
     "/continents/:iso-3166-1-alpha-2-:name")
 
   (defresources countries [country]
-    "/countries/:iso-3166-1-alpha-2-:name")
+    "/countries/:iso-3166-1-alpha-2-:name"
+    :server "https://example.com")
 
   (defresources countries-in-continent [continent country]
-    "/continents/:iso-3166-1-alpha-2-:name/countries/:iso-3166-1-alpha-2-:name"))
+    "/continents/:iso-3166-1-alpha-2-:name/countries/:iso-3166-1-alpha-2-:name"
+    :server *server*))
+
+(defresources languages [continent]
+  "/languages/:iso-639-1-:name"
+  :server {:scheme :https :server-name "api.other.com"})
 
 ;; CONTINENTS
 
@@ -201,7 +209,73 @@
               (assert (= (country-in-continent-path europe germany) (:uri request))))]
     (delete-country-in-continent europe germany)))
 
+;; LANGUAGES
+
+(defn test-languages-path []
+  (assert (= "/languages" (languages-path))))
+
+(defn test-language-path []
+  (assert (= "/languages/de-german" (language-path german))))
+
+(defn test-new-language-path []
+  (assert (= "/languages/new" (new-language-path))))
+
+(defn test-edit-language-path []
+  (assert (= "/languages/de-german/edit" (edit-language-path german))))
+
+(defn test-language []
+  (binding [*client*
+            (fn [request]
+              (assert (= :get (:request-method request)))
+              (assert (= :https (:scheme request)))
+              (assert (= "api.other.com" (:server-name request)))
+              (assert (= (language-path german) (:uri request)))
+              (assert (= {} (:body request))))]
+    (language german)))
+
+(defn test-languages []
+  (binding [*client*
+            (fn [request]
+              (assert (= :get (:request-method request)))
+              (assert (= :https (:scheme request)))
+              (assert (= "api.other.com" (:server-name request)))
+              (assert (= (languages-path) (:uri request)))
+              (assert (= {} (:body request)))
+              (assert (= {:page 1} (:query-params request))))]
+    (languages {:query-params {:page 1}})))
+
+(defn test-create-language []
+  (binding [*client*
+            (fn [request]
+              (assert (= :post (:request-method request)))
+              (assert (= :https (:scheme request)))
+              (assert (= "api.other.com" (:server-name request)))
+              (assert (= (languages-path) (:uri request)))
+              (assert (= german (:body request))))]
+    (create-language german)))
+
+(defn test-update-language []
+  (binding [*client*
+            (fn [request]
+              (assert (= :put (:request-method request)))
+              (assert (= :https (:scheme request)))
+              (assert (= "api.other.com" (:server-name request)))
+              (assert (= (language-path german) (:uri request)))
+              (assert (= german (:body request))))]
+    (update-language german)))
+
+(defn test-delete-language []
+  (binding [*client*
+            (fn [request]
+              (assert (= :delete (:request-method request)))
+              (assert (= :https (:scheme request)))
+              (assert (= "api.other.com" (:server-name request)))
+              (assert (= (language-path german) (:uri request)))
+              (assert (= {} (:body request))))]
+    (delete-language german)))
+
 (defn test []
+
   (test-continents-path)
   (test-continent-path)
   (test-new-continent-path)
@@ -211,6 +285,7 @@
   (test-create-continent)
   (test-update-continent)
   (test-delete-continent)
+
   (test-countries-path)
   (test-country-path)
   (test-new-country-path)
@@ -220,10 +295,21 @@
   (test-create-country)
   (test-update-country)
   (test-delete-country)
+
   (test-countries-in-continent-path)
   (test-country-in-continent-path)
   (test-countries-in-continent)
   (test-country-in-continent)
   (test-create-country-in-continent)
   (test-update-country-in-continent)
-  (test-delete-country-in-continent))
+  (test-delete-country-in-continent)
+
+  (test-languages-path)
+  (test-language-path)
+  (test-new-language-path)
+  (test-edit-language-path)
+  (test-language)
+  (test-languages)
+  (test-create-language)
+  (test-update-language)
+  (test-delete-language))

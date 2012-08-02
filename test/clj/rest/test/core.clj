@@ -1,21 +1,30 @@
 (ns rest.test.core
   (:use clojure.test
         rest.client
-        rest.core))
+        rest.core
+        routes.server))
 
 (def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
-(with-server "https://example.com"
+(def german {:iso-639-1 "de" :name "German"})
+
+(with-server example
 
   (defresources continents [country]
     "/continents/:iso-3166-1-alpha-2-:name")
 
   (defresources countries [country]
-    "/countries/:iso-3166-1-alpha-2-:name")
+    "/countries/:iso-3166-1-alpha-2-:name"
+    :server "https://example.com")
 
   (defresources countries-in-continent [continent country]
-    "/continents/:iso-3166-1-alpha-2-:name/countries/:iso-3166-1-alpha-2-:name"))
+    "/continents/:iso-3166-1-alpha-2-:name/countries/:iso-3166-1-alpha-2-:name"
+    :server *server*))
+
+(defresources languages [continent]
+  "/languages/:iso-639-1-:name"
+  :server {:scheme :https :server-name "api.other.com"})
 
 ;; CONTINENTS
 
@@ -83,7 +92,8 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
-       (is (= (continent-path europe) (:uri request))))]
+       (is (= (continent-path europe) (:uri request)))
+       (is (= {} (:body request))))]
     (delete-continent europe)))
 
 ;; COUNTRIES
@@ -151,7 +161,8 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
-       (is (= (country-path germany) (:uri request))))]
+       (is (= (country-path germany) (:uri request)))
+       (is (= {} (:body request))))]
     (delete-country germany)))
 
 (deftest test-new-country?
@@ -168,10 +179,12 @@
 ;; COUNTRIES IN CONTINENT
 
 (deftest test-countries-in-continent-path
-  (is (= "/continents/eu-europe/countries" (countries-in-continent-path europe))))
+  (is (= "/continents/eu-europe/countries"
+         (countries-in-continent-path europe))))
 
 (deftest test-country-in-continent-path
-  (is (= "/continents/eu-europe/countries/de-germany" (country-in-continent-path europe germany))))
+  (is (= "/continents/eu-europe/countries/de-germany"
+         (country-in-continent-path europe germany))))
 
 (deftest test-countries-in-continent
   (with-redefs
@@ -180,7 +193,8 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
-       (is (= (countries-in-continent-path europe) (:uri request))))]
+       (is (= (countries-in-continent-path europe) (:uri request)))
+       (is (= {} (:body request))))]
     (countries-in-continent europe)))
 
 (deftest test-country-in-continent
@@ -190,7 +204,8 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
-       (is (= (country-in-continent-path europe germany) (:uri request))))]
+       (is (= (country-in-continent-path europe germany) (:uri request)))
+       (is (= {} (:body request))))]
     (country-in-continent europe germany)))
 
 (deftest test-create-country-in-continent
@@ -222,8 +237,79 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
-       (is (= (country-in-continent-path europe germany) (:uri request))))]
+       (is (= (country-in-continent-path europe germany) (:uri request)))
+       (is (= {} (:body request))))]
     (delete-country-in-continent europe germany)))
+
+;; LANGUAGES
+
+(deftest test-languages-path
+  (is (= "/languages" (languages-path))))
+
+(deftest test-language-path
+  (is (= "/languages/de-german" (language-path german))))
+
+(deftest test-new-language-path
+  (is (= "/languages/new" (new-language-path))))
+
+(deftest test-edit-language-path
+  (is (= "/languages/de-german/edit" (edit-language-path german))))
+
+(deftest test-language
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :get (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "api.other.com" (:server-name request)))
+       (is (= (language-path german) (:uri request)))
+       (is (= {} (:body request))))]
+    (language german)))
+
+(deftest test-languages
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :get (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "api.other.com" (:server-name request)))
+       (is (= (languages-path) (:uri request)))
+       (is (= {} (:body request)))
+       (is (= {:page 1} (:query-params request))))]
+    (languages {:query-params {:page 1}})))
+
+(deftest test-create-language
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :post (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "api.other.com" (:server-name request)))
+       (is (= (languages-path) (:uri request)))
+       (is (= german (:body request))))]
+    (create-language german)))
+
+(deftest test-update-language
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :put (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "api.other.com" (:server-name request)))
+       (is (= (language-path german) (:uri request)))
+       (is (= german (:body request))))]
+    (update-language german)))
+
+(deftest test-delete-language
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :delete (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "api.other.com" (:server-name request)))
+       (is (= (language-path german) (:uri request)))
+       (is (= {} (:body request))))]
+    (delete-language german)))
 
 (comment
 
