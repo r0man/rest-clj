@@ -13,7 +13,7 @@
   (-> request
       client/wrap-query-params
       client/wrap-basic-auth
-      client/wrap-oauth
+      ;; client/wrap-oauth
       client/wrap-user-info
       client/wrap-url
       client/wrap-redirects
