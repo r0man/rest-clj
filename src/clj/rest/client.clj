@@ -1,6 +1,8 @@
 (ns rest.client
   (:require [clj-http.client :as client]
+            [clj-http.core :refer [request]]
             [clojure.string :refer [blank?]]
+            [rest.stacktrace :refer [wrap-stacktrace-client]]
             [rest.io :refer [wrap-accept wrap-response-as-meta]]
             [rest.io :refer [wrap-input-coercion wrap-output-coercion]]))
 
@@ -8,10 +10,30 @@
   (to-request [obj] "Make a Ring request map from `obj`."))
 
 (def ^:dynamic *client*
-  (-> client/request
+  (-> request
+      client/wrap-query-params
+      client/wrap-basic-auth
+      client/wrap-oauth
+      client/wrap-user-info
+      client/wrap-url
+      client/wrap-redirects
+      client/wrap-decompression
+      client/wrap-input-coercion
+      client/wrap-output-coercion
+      ;; client/wrap-exceptions
+      client/wrap-accept
+      client/wrap-accept-encoding
+      client/wrap-content-type
+      client/wrap-form-params
+      client/wrap-nested-params
+      client/wrap-method
+      ;; client/wrap-cookies
+      ;; client/wrap-links
+      client/wrap-unknown-host
       wrap-accept
       wrap-input-coercion
       wrap-output-coercion
+      wrap-stacktrace-client
       wrap-response-as-meta))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]

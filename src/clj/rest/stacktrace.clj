@@ -36,7 +36,7 @@
       (.setStackTrace (into-array StackTraceElement elements)))))
 
 (defn wrap-stacktrace-client
-  "Wrap the cljs-http `handler` and return thrown exceptions in a map."
+  "Wrap the clj-http `handler` and return thrown exceptions in a map."
   [handler & [status]]
   (let [status (or status 500)]
     (fn [request]

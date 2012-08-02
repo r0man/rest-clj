@@ -225,8 +225,6 @@
        (is (= (country-in-continent-path europe germany) (:uri request))))]
     (delete-country-in-continent europe germany)))
 
-
-;; (comment
-;;   (with-server "http://api.burningswell.dev"
-;;     (continents))
-;;   )
+(comment
+  (with-server "http://api.burningswell.dev"
+    (continent (first (continents)))))
