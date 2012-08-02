@@ -1,5 +1,6 @@
 (ns rest.stacktrace
-  (:require [clj-stacktrace.core :refer [parse-exception]]))
+  (:require [clj-http.client :refer [unexceptional-status?]]
+            [clj-stacktrace.core :refer [parse-exception]]))
 
 (defn format-class
   "Format the class name of a clj-stacktrace trace element."
@@ -48,9 +49,8 @@
   (let [status (or status 500)]
     (fn [request]
       (let [response (handler request)]
-        (if (= 200 (:status response))
-          response
-          (throw (make-throwable (:body response))))))))
+        (if (unexceptional-status? (:status response))
+          response (throw (make-throwable (:body response))))))))
 
 (defn wrap-stacktrace-server
   "Wrap the Ring `handler` and return thrown exceptions in a map."
