@@ -6,5 +6,4 @@
   (data/json-str arg))
 
 (defn read-json [s]
-  (if-not (blank? s)
-    (data/read-json s)))
+  (if-not (blank? s) (data/read-json s)))

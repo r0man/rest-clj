@@ -311,18 +311,39 @@
        (is (= {} (:body request))))]
     (delete-language german)))
 
-(comment
+;; (comment
 
-  (with-server "http://api.burningswell.dev"
-    (continent (first (continents))))
+;;   (with-server "http://api.burningswell.dev"
+;;     (continent (first (continents))))
 
-  (with-server "http://api.burningswell.dev"
-    (create-continent {:name "TEST"
-                       :iso-3166-1-alpha-2 "xx"
-                       :iso-3166-1-alpha-3 "xxx"
-                       :freebase-guid "3243234234"
-                       :geonames-id 123123
-                       :location {:latitude 0 :longitude 0}}))
+;;   (with-server "http://api.burningswell.dev"
+;;     (save-continent (first (continents))))
 
-  (with-server "http://api.burningswell.dev"
-    (delete-continent {:iso-3166-1-alpha-2 "xx"})))
+;;   (with-server "http://api.burningswell.dev"
+;;     (create-continent {:name "TEST"
+;;                        :iso-3166-1-alpha-2 "xx"
+;;                        :iso-3166-1-alpha-3 "xxx"
+;;                        :freebase-guid "3243234234"
+;;                        :geonames-id 123123
+;;                        :location {:latitude 0 :longitude 0}}))
+
+;;   (with-server "http://api.burningswell.dev"
+;;     (save-continent {:name "TEST"
+;;                      :iso-3166-1-alpha-2 "xx"
+;;                      :iso-3166-1-alpha-3 "xxx"
+;;                      :freebase-guid "3243234234"
+;;                      :geonames-id 123123
+;;                      :location {:latitude 0 :longitude 0}}))
+
+;;   (with-server "http://api.burningswell.dev"
+;;     (new-continent? {:name "TEST"
+;;                      :iso-3166-1-alpha-2 "xx"
+;;                      :iso-3166-1-alpha-3 "xxx"
+;;                      :freebase-guid "3243234234"
+;;                      :geonames-id 123123
+;;                      :location {:latitude 0 :longitude 0}}))
+
+;;   (with-server "http://api.burningswell.dev"
+;;     (delete-continent {:iso-3166-1-alpha-2 "xx"}))
+
+;;   )

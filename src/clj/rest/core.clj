@@ -40,30 +40,32 @@
            :server ~(:server options))
 
          (defn ~name# [~@(rest args#) & [~'opts]]
-           (http/get (~plural-url# ~@(rest args#)) ~'opts))
+           (:body (http/get (~plural-url# ~@(rest args#)) ~'opts)))
 
          (defn ~singular# [~@args# & [~'opts]]
-           (http/get (~singular-url# ~@args#) ~'opts))
+           (:body (http/get (~singular-url# ~@args#) ~'opts)))
 
          (defn ~(symbol (str "create-" singular#)) [~@args# & [{:as ~'opts}]]
-           (http/post
-            (~plural-url# ~@(reverse (rest (reverse args#))))
-            (assoc ~'opts :body ~(last args#))))
+           (:body (http/post (~plural-url# ~@(reverse (rest (reverse args#))))
+                             (assoc ~'opts :body ~(last args#)))))
 
          (defn ~(symbol (str "delete-" singular#)) [~@args# & [~'opts]]
-           (http/delete (~singular-url# ~@args#) ~'opts))
+           (:body (http/delete (~singular-url# ~@args#) ~'opts)))
 
          (defn ~(symbol (str "update-" singular#)) [~@args# & [{:as ~'opts}]]
-           (http/put
-            (~singular-url# ~@args#)
-            (assoc ~'opts :body ~(last args#))))
+           (:body (http/put (~singular-url# ~@args#)
+                            (assoc ~'opts :body ~(last args#)))))
 
          (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
-           (let [response#
-                 (http/head
-                  (~singular-url# ~@args#)
-                  ~'opts)]
-             (= 200 (:status response#)))))))
+           (not (= 200 (:status (http/head (~singular-url# ~@args#) ~'opts)))))
+
+         (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
+           (http/head (~singular-url# ~@args#) ~'opts))
+
+         (defn ~(symbol (str "save-" singular#)) [~@args# & [~'opts]]
+           (if (~(symbol (str "new-" singular# "?")) ~@args ~'opts)
+             (~(symbol (str "create-" singular#)) ~@args ~'opts)
+             (~(symbol (str "update-" singular#)) ~@args ~'opts))))))
 
 (defmacro with-server
   "Evaluate `body` with *server* bound to `server`."

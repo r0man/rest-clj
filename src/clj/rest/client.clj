@@ -33,8 +33,7 @@
       wrap-accept
       wrap-input-coercion
       wrap-output-coercion
-      wrap-stacktrace-client
-      wrap-response-as-meta))
+      wrap-stacktrace-client))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]
   (cond

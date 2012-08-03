@@ -49,8 +49,12 @@
   (let [status (or status 500)]
     (fn [request]
       (let [response (handler request)]
-        (if (unexceptional-status? (:status response))
-          response (throw (make-throwable (:body response))))))))
+        (cond
+         (= 404 (:status response))
+         (assoc response :body nil)
+         (unexceptional-status? (:status response))
+         response
+         :else (throw (make-throwable (:body response))))))))
 
 (defn wrap-stacktrace-server
   "Wrap the Ring `handler` and return thrown exceptions in a map."

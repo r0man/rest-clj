@@ -15,7 +15,11 @@
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
-  (fn [response] (content-type response)))
+  (fn [response]
+    ;; (prn "DESERIALIZE")
+    ;; (prn response)
+    ;; (println)
+    (content-type response)))
 
 (defmethod deserialize :default
   [response] response)
@@ -34,7 +38,11 @@
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
-  (fn [request] (keyword (or (content-type request) *content-type*))))
+  (fn [request]
+    ;; (prn "SERIALIZE")
+    ;; (prn request)
+    ;; (println)
+    (keyword (or (content-type request) *content-type*))))
 
 (defmethod serialize :application/clojure
   [{:keys [body] :as request}]
@@ -65,7 +73,7 @@
      (if (instance? clojure.lang.IMeta (:body response))
        (with-meta (:body response)
          (dissoc response :body))
-       response)))
+       (:body response))))
 
 (defn wrap-response-as-vector [handler]
   #(let [response (handler %1)]
