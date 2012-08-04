@@ -3,8 +3,7 @@
             [clj-http.core :refer [request]]
             [clojure.string :refer [blank?]]
             [rest.stacktrace :refer [wrap-stacktrace-client]]
-            [rest.io :refer [wrap-accept wrap-response-as-meta]]
-            [rest.io :refer [wrap-input-coercion wrap-output-coercion]]
+            [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]
             [routes.helper :refer [parse-url]]))
 
 (defprotocol IRequest

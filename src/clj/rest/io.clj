@@ -13,6 +13,12 @@
     (if-not (blank?  content-type)
       (keyword (replace content-type #";.*" "")))))
 
+(defn meta-body [response]
+  (if (instance? clojure.lang.IMeta (:body response))
+    (with-meta (:body response)
+      (dissoc response :body))
+    (:body response))  )
+
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
   (fn [response] (content-type response)))
@@ -70,14 +76,3 @@
 
 (defn wrap-output-coercion [handler]
   #(deserialize (handler %1)))
-
-(defn wrap-response-as-meta [handler]
-  #(let [response (handler %1)]
-     (if (instance? clojure.lang.IMeta (:body response))
-       (with-meta (:body response)
-         (dissoc response :body))
-       (:body response))))
-
-(defn wrap-response-as-vector [handler]
-  #(let [response (handler %1)]
-     [(:body response) (dissoc response :body)]))

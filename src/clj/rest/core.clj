@@ -40,21 +40,21 @@
            :server ~(:server options))
 
          (defn ~name# [~@(rest args#) & [~'opts]]
-           (:body (http/get (~plural-url# ~@(rest args#)) ~'opts)))
+           (rest.io/meta-body (http/get (~plural-url# ~@(rest args#)) ~'opts)))
 
          (defn ~singular# [~@args# & [~'opts]]
-           (:body (http/get (~singular-url# ~@args#) ~'opts)))
+           (rest.io/meta-body (http/get (~singular-url# ~@args#) ~'opts)))
 
          (defn ~(symbol (str "create-" singular#)) [~@args# & [{:as ~'opts}]]
-           (:body (http/post (~plural-url# ~@(reverse (rest (reverse args#))))
-                             (assoc ~'opts :body ~(last args#)))))
+           (rest.io/meta-body (http/post (~plural-url# ~@(reverse (rest (reverse args#))))
+                                         (assoc ~'opts :body ~(last args#)))))
 
          (defn ~(symbol (str "delete-" singular#)) [~@args# & [~'opts]]
-           (:body (http/delete (~singular-url# ~@args#) ~'opts)))
+           (rest.io/meta-body (http/delete (~singular-url# ~@args#) ~'opts)))
 
          (defn ~(symbol (str "update-" singular#)) [~@args# & [{:as ~'opts}]]
-           (:body (http/put (~singular-url# ~@args#)
-                            (assoc ~'opts :body ~(last args#)))))
+           (rest.io/meta-body (http/put (~singular-url# ~@args#)
+                                        (assoc ~'opts :body ~(last args#)))))
 
          (defn ~(symbol (str "new-" singular# "?")) [~@args# & [~'opts]]
            (not (= 200 (:status (http/head (~singular-url# ~@args#) ~'opts)))))
