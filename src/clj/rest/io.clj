@@ -15,11 +15,7 @@
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
-  (fn [response]
-    ;; (prn "DESERIALIZE")
-    ;; (prn response)
-    ;; (println)
-    (content-type response)))
+  (fn [response] (content-type response)))
 
 (defmethod deserialize :default
   [response] response)
@@ -38,11 +34,7 @@
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
-  (fn [request]
-    ;; (prn "SERIALIZE")
-    ;; (prn request)
-    ;; (println)
-    (keyword (or (content-type request) *content-type*))))
+  (fn [request] (keyword (or (content-type request) *content-type*))))
 
 (defmethod serialize :application/clojure
   [{:keys [body] :as request}]
@@ -61,6 +53,17 @@
 (defn wrap-accept [handler & [content-type]]
   (let [content-type (or content-type *content-type*)]
     #(handler (assoc-in %1 [:headers "accept"] content-type))))
+
+(defn wrap-debug [handler]
+  (fn [request]
+    (prn ">>> REQUEST >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    (prn request)
+    (println)
+    (let [response (handler request)]
+      (prn ">>> RESPONSE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      (prn response)
+      (println)
+      response)))
 
 (defn wrap-input-coercion [handler]
   #(handler (serialize %1)))
