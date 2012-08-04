@@ -60,7 +60,7 @@
 
 (defn wrap-accept [handler & [content-type]]
   (let [content-type (or content-type *content-type*)]
-    #(handler (assoc-in %1 [:headers "Accept"] content-type))))
+    #(handler (assoc-in %1 [:headers "accept"] content-type))))
 
 (defn wrap-input-coercion [handler]
   #(handler (serialize %1)))

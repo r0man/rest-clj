@@ -36,7 +36,7 @@
       (is (= (json-str body) (:body request))))))
 
 (deftest test-wrap-accept
-  (is (= {:body {} :headers {"Accept" "application/json"}}
+  (is (= {:body {} :headers {"accept" "application/json"}}
          ((wrap-accept identity) {:body {}})))
-  (is (= {:body {} :headers {"Accept" "application/clojure"}}
+  (is (= {:body {} :headers {"accept" "application/clojure"}}
          ((wrap-accept identity "application/clojure") {:body {}}))))
