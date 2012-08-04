@@ -14,10 +14,12 @@
       (keyword (replace content-type #";.*" "")))))
 
 (defn meta-body [response]
-  (if (instance? clojure.lang.IMeta (:body response))
+  ;; TODO: instance? clojure.lang.IMeta
+  (if (or (map? (:body response))
+          (sequential? (:body response)))
     (with-meta (:body response)
       (dissoc response :body))
-    (:body response))  )
+    (:body response)))
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."

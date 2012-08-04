@@ -6,4 +6,9 @@
   (data/json-str arg))
 
 (defn read-json [s]
-  (if-not (blank? s) (data/read-json s)))
+  (cond
+   (and (string? s)
+        (not (blank? s)))
+   (data/read-json s)
+   (instance? java.io.InputStream s)
+   (read-json (slurp s))))

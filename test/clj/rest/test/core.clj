@@ -12,18 +12,18 @@
 (with-server example
 
   (defresources continents [country]
-    "/continents/:iso-3166-1-alpha-2-:name")
+    "/continents/[:iso-3166-1-alpha-2]-[:name]")
 
   (defresources countries [country]
-    "/countries/:iso-3166-1-alpha-2-:name"
+    "/countries/[:iso-3166-1-alpha-2]-[:name]"
     :server "https://example.com")
 
   (defresources countries-in-continent [continent country]
-    "/continents/:iso-3166-1-alpha-2-:name/countries/:iso-3166-1-alpha-2-:name"
+    "/continents/[:iso-3166-1-alpha-2]-[:name]/countries/[:iso-3166-1-alpha-2]-[:name]"
     :server *server*))
 
 (defresources languages [continent]
-  "/languages/:iso-639-1-:name"
+  "/languages/[:iso-639-1]-[:name]"
   :server {:scheme :https :server-name "api.other.com"})
 
 ;; CONTINENTS
