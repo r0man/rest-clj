@@ -4,7 +4,8 @@
             [clojure.string :refer [blank?]]
             [rest.stacktrace :refer [wrap-stacktrace-client]]
             [rest.io :refer [wrap-accept wrap-response-as-meta]]
-            [rest.io :refer [wrap-input-coercion wrap-output-coercion]]))
+            [rest.io :refer [wrap-input-coercion wrap-output-coercion]]
+            [routes.helper :refer [parse-url]]))
 
 (defprotocol IRequest
   (to-request [obj] "Make a Ring request map from `obj`."))
@@ -39,13 +40,13 @@
   (cond
    (and server-name uri) m
    (not (blank? uri))
-   (assoc (client/parse-url uri)
+   (assoc (parse-url uri)
      :body (dissoc m :uri)
      :request-method :get)
    :else (throw (Exception. (str "Can't create Ring request map from: " (prn-str m))))))
 
 (defn- parse-string [s]
-  (assoc (client/parse-url s)
+  (assoc (parse-url s)
     :body {}
     :request-method :get))
 

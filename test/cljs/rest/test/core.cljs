@@ -46,6 +46,7 @@
             (fn [request]
               (assert (= :get (:request-method request)))
               (assert (= :https (:scheme request)))
+              (assert (= 443 (:server-port request)))
               (assert (= "example.com" (:server-name request)))
               (assert (= (continent-path europe) (:uri request)))
               (assert (= {} (:body request))))]
@@ -57,6 +58,7 @@
               (assert (= :get (:request-method request)))
               (assert (= :https (:scheme request)))
               (assert (= "example.com" (:server-name request)))
+              (assert (= 443 (:server-port request)))
               (assert (= (continents-path) (:uri request)))
               (assert (= {} (:body request)))
               (assert (= {:page 1} (:query-params request))))]

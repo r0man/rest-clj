@@ -11,6 +11,7 @@
                 (assert (= :get (:request-method request)))
                 (assert (= :http (:scheme request)))
                 (assert (= "example.com" (:server-name request)))
+                (assert (= 80 (:server-port request)))
                 (assert (= "/countries" (:uri request))))]
       (client/send-request :get "http://example.com/countries"))))
 
@@ -19,6 +20,7 @@
     (assert (= :get (:request-method request)))
     (assert (= :http (:scheme request)))
     (assert (= "example.com" (:server-name request)))
+    (assert (= 80 (:server-port request)))
     (assert (= "/continents/eu-europe" (:uri request)))
     (assert (= {} (:body request))))
   (assert (= (client/to-request europe)

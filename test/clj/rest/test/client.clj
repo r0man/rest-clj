@@ -14,6 +14,7 @@
          (is (= :get (:request-method request)))
          (is (= :http (:scheme request)))
          (is (= "example.com" (:server-name request)))
+         (is (= 80 (:server-port request)))
          (is (= "/countries" (:uri request)))
          response)]
       (is (= response (send-request :get "http://example.com/countries"))))))
@@ -23,12 +24,14 @@
     (is (= :get (:request-method request)))
     (is (= :http (:scheme request)))
     (is (= "example.com" (:server-name request)))
+         (is (= 80 (:server-port request)))
     (is (= "/continents/eu-europe" (:uri request)))
     (is (= {} (:body request))))
   (let [request (to-request {:uri europe})]
     (is (= :get (:request-method request)))
     (is (= :http (:scheme request)))
     (is (= "example.com" (:server-name request)))
+    (is (= 80 (:server-port request)))
     (is (= "/continents/eu-europe" (:uri request)))
     (is (= request (to-request request))))
   (is (= (to-request europe)

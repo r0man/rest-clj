@@ -47,6 +47,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (= {} (:body request))))]
     (continent europe)))
@@ -58,6 +59,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (continents-path) (:uri request)))
        (is (= {} (:body request)))
        (is (= {:page 1} (:query-params request))))]
@@ -70,6 +72,7 @@
        (is (= :post (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (continents-path) (:uri request)))
        (is (= europe (:body request))))]
     (create-continent europe)))
@@ -81,6 +84,7 @@
        (is (= :put (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (= europe (:body request))))]
     (update-continent europe)))
@@ -92,6 +96,7 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (= {} (:body request))))]
     (delete-continent europe)))
@@ -117,6 +122,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (= {} (:body request))))]
     (country germany)))
@@ -128,6 +134,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (countries-path) (:uri request)))
        (is (= {} (:body request))))]
     (countries)))
@@ -139,6 +146,7 @@
        (is (= :post (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (countries-path) (:uri request)))
        (is (= germany (:body request))))]
     (create-country germany)))
@@ -150,6 +158,7 @@
        (is (= :put (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (= germany (:body request))))]
     (update-country germany)))
@@ -161,6 +170,7 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (= {} (:body request))))]
     (delete-country germany)))
@@ -172,6 +182,7 @@
        (is (= :head (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (= {} (:body request))))]
     (new-country? germany)))
@@ -193,6 +204,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (countries-in-continent-path europe) (:uri request)))
        (is (= {} (:body request))))]
     (countries-in-continent europe)))
@@ -204,6 +216,7 @@
        (is (= :get (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-in-continent-path europe germany) (:uri request)))
        (is (= {} (:body request))))]
     (country-in-continent europe germany)))
@@ -215,6 +228,7 @@
        (is (= :post (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (countries-in-continent-path europe) (:uri request)))
        (is (= germany (:body request))))]
     (create-country-in-continent europe germany)))
@@ -226,6 +240,7 @@
        (is (= :put (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-in-continent-path europe germany) (:uri request)))
        (is (= germany (:body request))))]
     (update-country-in-continent europe germany)))
@@ -237,6 +252,7 @@
        (is (= :delete (:request-method request)))
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
        (is (= (country-in-continent-path europe germany) (:uri request)))
        (is (= {} (:body request))))]
     (delete-country-in-continent europe germany)))
