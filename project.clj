@@ -10,7 +10,7 @@
                  [org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.2"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
-  :plugins [[lein-cljsbuild "0.2.4"]]
+  :plugins [[lein-cljsbuild "0.2.5"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
                                    :optimizations :whitespace
