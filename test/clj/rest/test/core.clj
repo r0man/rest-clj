@@ -1,44 +1,47 @@
 (ns rest.test.core
+  (:require [routes.params :as params])
   (:use clojure.test
         rest.client
         rest.core
-        routes.server))
+        routes.core))
 
-(def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
+(def europe {:id 1 :name "Europe"})
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
 (def german {:iso-639-1 "de" :name "German"})
 
-(with-server example
+(def ^:dynamic *server*
+  {:scheme :https :server-name "example.com" :server-port 443})
 
-  (defresources continents [country]
-    "/continents/[:iso-3166-1-alpha-2]-[:name]")
+(defroute root []
+  ["/"]
+  :server *server*)
 
-  (defresources countries [country]
-    "/countries/[:iso-3166-1-alpha-2]-[:name]"
-    :server "https://example.com")
+(defresources continents [continent]
+  ["/continents/:id-:name" params/integer params/string]
+  :root root-route)
 
-  (defresources countries-in-continent [continent country]
-    "/continents/[:iso-3166-1-alpha-2]-[:name]/countries/[:iso-3166-1-alpha-2]-[:name]"
-    :server *server*))
+(defresources countries [country]
+  ["/countries/:iso-3166-1-alpha-2-:name" params/iso-3166-1-alpha-2 params/string]
+  :root root-route)
 
-(defresources languages [continent]
-  "/languages/[:iso-639-1]-[:name]"
-  :server {:scheme :https :server-name "api.other.com"})
+(defresources countries-of-continent [country]
+  ["/countries/:iso-3166-1-alpha-2-:name" params/iso-3166-1-alpha-2 params/string]
+  :root continent-route)
 
 ;; CONTINENTS
 
-(deftest test-continents-path
-  (is (= "/continents" (continents-path))))
+(deftest test-continents-url
+  (is (= "https://example.com/continents" (continents-url))))
 
-(deftest test-continent-path
-  (is (= "/continents/eu-europe" (continent-path europe))))
+(deftest test-continent-url
+  (is (= "https://example.com/continents/1-europe" (continent-url europe))))
 
-(deftest test-new-continent-path
-  (is (= "/continents/new" (new-continent-path))))
+(deftest test-new-continent-url
+  (is (= "https://example.com/continents/new" (new-continent-url))))
 
-(deftest test-edit-continent-path
-  (is (= "/continents/eu-europe/edit" (edit-continent-path europe))))
+(deftest test-edit-continent-url
+  (is (= "https://example.com/continents/1-europe/edit" (edit-continent-url europe))))
 
 (deftest test-continent
   (with-redefs
@@ -101,19 +104,31 @@
        (is (= {} (:body request))))]
     (delete-continent europe)))
 
+(deftest test-new-continent?
+  (with-redefs
+    [*client*
+     (fn [request]
+       (is (= :head (:request-method request)))
+       (is (= :https (:scheme request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
+       (is (= (continent-path europe) (:uri request)))
+       (is (= {} (:body request))))]
+    (new-continent? europe)))
+
 ;; COUNTRIES
 
-(deftest test-countries-path
-  (is (= "/countries" (countries-path))))
+(deftest test-countries-url
+  (is (= "https://example.com/countries" (countries-url))))
 
-(deftest test-country-path
-  (is (= "/countries/de-germany" (country-path germany))))
+(deftest test-country-url
+  (is (= "https://example.com/countries/de-germany" (country-url germany))))
 
-(deftest test-new-country-path
-  (is (= "/countries/new" (new-country-path))))
+(deftest test-new-country-url
+  (is (= "https://example.com/countries/new" (new-country-url))))
 
-(deftest test-edit-country-path
-  (is (= "/countries/de-germany/edit" (edit-country-path germany))))
+(deftest test-edit-country-url
+  (is (= "https://example.com/countries/de-germany/edit" (edit-country-url germany))))
 
 (deftest test-country
   (with-redefs
@@ -189,15 +204,23 @@
 
 ;; COUNTRIES IN CONTINENT
 
-(deftest test-countries-in-continent-path
-  (is (= "/continents/eu-europe/countries"
-         (countries-in-continent-path europe))))
+(deftest test-countries-of-continent-url
+  (is (= "https://example.com/continents/1-europe/countries"
+         (countries-of-continent-url europe))))
 
-(deftest test-country-in-continent-path
-  (is (= "/continents/eu-europe/countries/de-germany"
-         (country-in-continent-path europe germany))))
+(deftest test-country-of-continent-url
+  (is (= "https://example.com/continents/1-europe/countries/de-germany"
+         (country-of-continent-url europe germany))))
 
-(deftest test-countries-in-continent
+(deftest test-new-country-of-continent-url
+  (is (= "https://example.com/continents/1-europe/countries/new"
+         (new-country-of-continent-url europe))))
+
+(deftest test-edit-country-of-continent-url
+  (is (= "https://example.com/continents/1-europe/countries/de-germany/edit"
+         (edit-country-of-continent-url europe germany))))
+
+(deftest test-countries-of-continent
   (with-redefs
     [*client*
      (fn [request]
@@ -205,11 +228,11 @@
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
-       (is (= (countries-in-continent-path europe) (:uri request)))
+       (is (= (countries-of-continent-path europe) (:uri request)))
        (is (= {} (:body request))))]
-    (countries-in-continent europe)))
+    (countries-of-continent europe)))
 
-(deftest test-country-in-continent
+(deftest test-country-of-continent
   (with-redefs
     [*client*
      (fn [request]
@@ -217,11 +240,11 @@
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
-       (is (= (country-in-continent-path europe germany) (:uri request)))
+       (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (= {} (:body request))))]
-    (country-in-continent europe germany)))
+    (country-of-continent europe germany)))
 
-(deftest test-create-country-in-continent
+(deftest test-create-country-of-continent
   (with-redefs
     [*client*
      (fn [request]
@@ -229,11 +252,11 @@
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
-       (is (= (countries-in-continent-path europe) (:uri request)))
+       (is (= (countries-of-continent-path europe) (:uri request)))
        (is (= germany (:body request))))]
-    (create-country-in-continent europe germany)))
+    (create-country-of-continent europe germany)))
 
-(deftest test-update-country-in-continent
+(deftest test-update-country-of-continent
   (with-redefs
     [*client*
      (fn [request]
@@ -241,11 +264,11 @@
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
-       (is (= (country-in-continent-path europe germany) (:uri request)))
+       (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (= germany (:body request))))]
-    (update-country-in-continent europe germany)))
+    (update-country-of-continent europe germany)))
 
-(deftest test-delete-country-in-continent
+(deftest test-delete-country-of-continent
   (with-redefs
     [*client*
      (fn [request]
@@ -253,113 +276,55 @@
        (is (= :https (:scheme request)))
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
-       (is (= (country-in-continent-path europe germany) (:uri request)))
+       (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (= {} (:body request))))]
-    (delete-country-in-continent europe germany)))
+    (delete-country-of-continent europe germany)))
 
-;; LANGUAGES
-
-(deftest test-languages-path
-  (is (= "/languages" (languages-path))))
-
-(deftest test-language-path
-  (is (= "/languages/de-german" (language-path german))))
-
-(deftest test-new-language-path
-  (is (= "/languages/new" (new-language-path))))
-
-(deftest test-edit-language-path
-  (is (= "/languages/de-german/edit" (edit-language-path german))))
-
-(deftest test-language
+(deftest test-new-country-of-continent?
   (with-redefs
     [*client*
      (fn [request]
-       (is (= :get (:request-method request)))
+       (is (= :head (:request-method request)))
        (is (= :https (:scheme request)))
-       (is (= "api.other.com" (:server-name request)))
-       (is (= (language-path german) (:uri request)))
+       (is (= "example.com" (:server-name request)))
+       (is (= 443 (:server-port request)))
+       (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (= {} (:body request))))]
-    (language german)))
+    (new-country-of-continent? europe germany)))
 
-(deftest test-languages
-  (with-redefs
-    [*client*
-     (fn [request]
-       (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "api.other.com" (:server-name request)))
-       (is (= (languages-path) (:uri request)))
-       (is (= {} (:body request)))
-       (is (= {:page 1} (:query-params request))))]
-    (languages {:query-params {:page 1}})))
+;; ;; (comment
 
-(deftest test-create-language
-  (with-redefs
-    [*client*
-     (fn [request]
-       (is (= :post (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "api.other.com" (:server-name request)))
-       (is (= (languages-path) (:uri request)))
-       (is (= german (:body request))))]
-    (create-language german)))
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (continent (first (continents))))
 
-(deftest test-update-language
-  (with-redefs
-    [*client*
-     (fn [request]
-       (is (= :put (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "api.other.com" (:server-name request)))
-       (is (= (language-path german) (:uri request)))
-       (is (= german (:body request))))]
-    (update-language german)))
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (save-continent (first (continents))))
 
-(deftest test-delete-language
-  (with-redefs
-    [*client*
-     (fn [request]
-       (is (= :delete (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "api.other.com" (:server-name request)))
-       (is (= (language-path german) (:uri request)))
-       (is (= {} (:body request))))]
-    (delete-language german)))
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (create-continent {:name "TEST"
+;; ;;                        :iso-3166-1-alpha-2 "xx"
+;; ;;                        :iso-3166-1-alpha-3 "xxx"
+;; ;;                        :freebase-guid "3243234234"
+;; ;;                        :geonames-id 123123
+;; ;;                        :location {:latitude 0 :longitude 0}}))
 
-;; (comment
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (save-continent {:name "TEST"
+;; ;;                      :iso-3166-1-alpha-2 "xx"
+;; ;;                      :iso-3166-1-alpha-3 "xxx"
+;; ;;                      :freebase-guid "3243234234"
+;; ;;                      :geonames-id 123123
+;; ;;                      :location {:latitude 0 :longitude 0}}))
 
-;;   (with-server "http://api.burningswell.dev"
-;;     (continent (first (continents))))
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (new-continent? {:name "TEST"
+;; ;;                      :iso-3166-1-alpha-2 "xx"
+;; ;;                      :iso-3166-1-alpha-3 "xxx"
+;; ;;                      :freebase-guid "3243234234"
+;; ;;                      :geonames-id 123123
+;; ;;                      :location {:latitude 0 :longitude 0}}))
 
-;;   (with-server "http://api.burningswell.dev"
-;;     (save-continent (first (continents))))
+;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;     (delete-continent {:iso-3166-1-alpha-2 "xx"}))
 
-;;   (with-server "http://api.burningswell.dev"
-;;     (create-continent {:name "TEST"
-;;                        :iso-3166-1-alpha-2 "xx"
-;;                        :iso-3166-1-alpha-3 "xxx"
-;;                        :freebase-guid "3243234234"
-;;                        :geonames-id 123123
-;;                        :location {:latitude 0 :longitude 0}}))
-
-;;   (with-server "http://api.burningswell.dev"
-;;     (save-continent {:name "TEST"
-;;                      :iso-3166-1-alpha-2 "xx"
-;;                      :iso-3166-1-alpha-3 "xxx"
-;;                      :freebase-guid "3243234234"
-;;                      :geonames-id 123123
-;;                      :location {:latitude 0 :longitude 0}}))
-
-;;   (with-server "http://api.burningswell.dev"
-;;     (new-continent? {:name "TEST"
-;;                      :iso-3166-1-alpha-2 "xx"
-;;                      :iso-3166-1-alpha-3 "xxx"
-;;                      :freebase-guid "3243234234"
-;;                      :geonames-id 123123
-;;                      :location {:latitude 0 :longitude 0}}))
-
-;;   (with-server "http://api.burningswell.dev"
-;;     (delete-continent {:iso-3166-1-alpha-2 "xx"}))
-
-;;   )
+;; ;;   )

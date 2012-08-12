@@ -1,317 +1,325 @@
 (ns rest.test.core
   (:require [rest.client :refer [*client* send-request]]
-            [routes.server :refer [example *server*]]
-            [routes.helper :refer [register-route]])
+            [routes.helper :refer [register-route]]
+            [routes.params :as params])
   (:use-macros [rest.core :only [defresources with-server]]
                [routes.core :only [defroute]]))
 
-(def europe {:iso-3166-1-alpha-2 "eu" :name "Europe"})
+(def europe {:id 1 :name "Europe"})
 (def germany {:iso-3166-1-alpha-2 "de" :name "Germany"})
 
 (def german {:iso-639-1 "de" :name "German"})
 
-(with-server example
+(def ^:dynamic *server*
+  {:scheme :https :server-name "example.com" :server-port 443})
 
-  (defresources continents [country]
-    "/continents/[:iso-3166-1-alpha-2]-[:name]")
+(defroute root []
+  ["/"]
+  :server *server*)
 
-  (defresources countries [country]
-    "/countries/[:iso-3166-1-alpha-2]-[:name]"
-    :server "https://example.com")
+(defresources continents [continent]
+  ["/continents/:id-:name" params/integer params/string]
+  :root root-route)
 
-  (defresources countries-in-continent [continent country]
-    "/continents/[:iso-3166-1-alpha-2]-[:name]/countries/[:iso-3166-1-alpha-2]-[:name]"
-    :server *server*))
+(defresources countries [country]
+  ["/countries/:iso-3166-1-alpha-2-:name" params/iso-3166-1-alpha-2 params/string]
+  :root root-route)
 
-(defresources languages [continent]
-  "/languages/[:iso-639-1]-[:name]"
-  :server {:scheme :https :server-name "api.other.com"})
+(defresources countries-of-continent [country]
+  ["/countries/:iso-3166-1-alpha-2-:name" params/iso-3166-1-alpha-2 params/string]
+  :root continent-route)
 
 ;; CONTINENTS
 
-(defn test-continents-path []
-  (assert (= "/continents" (continents-path))))
+(defn test-continents-url []
+  (assert (= "https://example.com/continents" (continents-url))))
 
-(defn test-continent-path []
-  (assert (= "/continents/eu-europe" (continent-path europe))))
+(defn test-continent-url []
+  (assert (= "https://example.com/continents/1-europe" (continent-url europe))))
 
-(defn test-new-continent-path []
-  (assert (= "/continents/new" (new-continent-path))))
+(defn test-new-continent-url []
+  (assert (= "https://example.com/continents/new" (new-continent-url))))
 
-(defn test-edit-continent-path []
-  (assert (= "/continents/eu-europe/edit" (edit-continent-path europe))))
+(defn test-edit-continent-url []
+  (assert (= "https://example.com/continents/1-europe/edit" (edit-continent-url europe))))
 
 (defn test-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= 443 (:server-port request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (continent-path europe) (:uri request)))
-              (assert (= {} (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continent-path europe) (:uri request)))
+         (assert (= {} (:body request))))]
     (continent europe)))
 
 (defn test-continents []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= 443 (:server-port request)))
-              (assert (= (continents-path) (:uri request)))
-              (assert (= {} (:body request)))
-              (assert (= {:page 1} (:query-params request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continents-path) (:uri request)))
+         (assert (= {} (:body request)))
+         (assert (= {:page 1} (:query-params request))))]
     (continents {:query-params {:page 1}})))
 
 (defn test-create-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :post (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (continents-path) (:uri request)))
-              (assert (= europe (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :post (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continents-path) (:uri request)))
+         (assert (= europe (:body request))))]
     (create-continent europe)))
 
 (defn test-update-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :put (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (continent-path europe) (:uri request)))
-              (assert (= europe (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :put (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continent-path europe) (:uri request)))
+         (assert (= europe (:body request))))]
     (update-continent europe)))
 
 (defn test-delete-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :delete (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (continent-path europe) (:uri request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :delete (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continent-path europe) (:uri request)))
+         (assert (= {} (:body request))))]
     (delete-continent europe)))
+
+(defn test-new-continent? []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :head (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (continent-path europe) (:uri request)))
+         (assert (= {} (:body request))))]
+    (new-continent? europe)))
 
 ;; COUNTRIES
 
-(defn test-countries-path []
-  (assert (= "/countries" (countries-path))))
+(defn test-countries-url []
+  (assert (= "https://example.com/countries" (countries-url))))
 
-(defn test-country-path []
-  (assert (= "/countries/de-germany" (country-path germany))))
+(defn test-country-url []
+  (assert (= "https://example.com/countries/de-germany" (country-url germany))))
 
-(defn test-new-country-path []
-  (assert (= "/countries/new" (new-country-path))))
+(defn test-new-country-url []
+  (assert (= "https://example.com/countries/new" (new-country-url))))
 
-(defn test-edit-country-path []
-  (assert (= "/countries/de-germany/edit" (edit-country-path germany))))
+(defn test-edit-country-url []
+  (assert (= "https://example.com/countries/de-germany/edit" (edit-country-url germany))))
 
 (defn test-country []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-path germany) (:uri request)))
-              (assert (= {} (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-path germany) (:uri request)))
+         (assert (= {} (:body request))))]
     (country germany)))
 
 (defn test-countries []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (countries-path) (:uri request)))
-              (assert (= {} (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (countries-path) (:uri request)))
+         (assert (= {} (:body request))))]
     (countries)))
 
 (defn test-create-country []
-  (binding [*client*
-            (fn [request]
-              (assert (= :post (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (countries-path) (:uri request)))
-              (assert (= germany (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :post (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (countries-path) (:uri request)))
+         (assert (= germany (:body request))))]
     (create-country germany)))
 
 (defn test-update-country []
-  (binding [*client*
-            (fn [request]
-              (assert (= :put (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-path germany) (:uri request)))
-              (assert (= germany (:body request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :put (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-path germany) (:uri request)))
+         (assert (= germany (:body request))))]
     (update-country germany)))
 
 (defn test-delete-country []
-  (binding [*client*
-            (fn [request]
-              (assert (= :delete (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-path germany) (:uri request))))]
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :delete (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-path germany) (:uri request)))
+         (assert (= {} (:body request))))]
     (delete-country germany)))
+
+(defn test-new-country? []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :head (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-path germany) (:uri request)))
+         (assert (= {} (:body request))))]
+    (new-country? germany)))
 
 ;; COUNTRIES IN CONTINENT
 
-(defn test-countries-in-continent-path []
-  (assert (= "/continents/eu-europe/countries" (countries-in-continent-path europe))))
+(defn test-countries-of-continent-url []
+  (assert (= "https://example.com/continents/1-europe/countries"
+             (countries-of-continent-url europe))))
 
-(defn test-country-in-continent-path []
-  (assert (= "/continents/eu-europe/countries/de-germany" (country-in-continent-path europe germany))))
+(defn test-country-of-continent-url []
+  (assert (= "https://example.com/continents/1-europe/countries/de-germany"
+             (country-of-continent-url europe germany))))
 
-(defn test-countries-in-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (countries-in-continent-path europe) (:uri request))))]
-    (countries-in-continent europe)))
+(defn test-new-country-of-continent-url []
+  (assert (= "https://example.com/continents/1-europe/countries/new"
+             (new-country-of-continent-url europe))))
 
-(defn test-country-in-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-in-continent-path europe germany) (:uri request))))]
-    (country-in-continent europe germany)))
+(defn test-edit-country-of-continent-url []
+  (assert (= "https://example.com/continents/1-europe/countries/de-germany/edit"
+             (edit-country-of-continent-url europe germany))))
 
-(defn test-create-country-in-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :post (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (countries-in-continent-path europe) (:uri request)))
-              (assert (= germany (:body request))))]
-    (create-country-in-continent europe germany)))
+(defn test-countries-of-continent []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (countries-of-continent-path europe) (:uri request)))
+         (assert (= {} (:body request))))]
+    (countries-of-continent europe)))
 
-(defn test-update-country-in-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :put (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-in-continent-path europe germany) (:uri request)))
-              (assert (= germany (:body request))))]
-    (update-country-in-continent europe germany)))
+(defn test-country-of-continent []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :get (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-of-continent-path europe germany) (:uri request)))
+         (assert (= {} (:body request))))]
+    (country-of-continent europe germany)))
 
-(defn test-delete-country-in-continent []
-  (binding [*client*
-            (fn [request]
-              (assert (= :delete (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "example.com" (:server-name request)))
-              (assert (= (country-in-continent-path europe germany) (:uri request))))]
-    (delete-country-in-continent europe germany)))
+(defn test-create-country-of-continent []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :post (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (countries-of-continent-path europe) (:uri request)))
+         (assert (= germany (:body request))))]
+    (create-country-of-continent europe germany)))
 
-;; LANGUAGES
+(defn test-update-country-of-continent []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :put (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-of-continent-path europe germany) (:uri request)))
+         (assert (= germany (:body request))))]
+    (update-country-of-continent europe germany)))
 
-(defn test-languages-path []
-  (assert (= "/languages" (languages-path))))
+(defn test-delete-country-of-continent []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :delete (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-of-continent-path europe germany) (:uri request)))
+         (assert (= {} (:body request))))]
+    (delete-country-of-continent europe germany)))
 
-(defn test-language-path []
-  (assert (= "/languages/de-german" (language-path german))))
-
-(defn test-new-language-path []
-  (assert (= "/languages/new" (new-language-path))))
-
-(defn test-edit-language-path []
-  (assert (= "/languages/de-german/edit" (edit-language-path german))))
-
-(defn test-language []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "api.other.com" (:server-name request)))
-              (assert (= (language-path german) (:uri request)))
-              (assert (= {} (:body request))))]
-    (language german)))
-
-(defn test-languages []
-  (binding [*client*
-            (fn [request]
-              (assert (= :get (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "api.other.com" (:server-name request)))
-              (assert (= (languages-path) (:uri request)))
-              (assert (= {} (:body request)))
-              (assert (= {:page 1} (:query-params request))))]
-    (languages {:query-params {:page 1}})))
-
-(defn test-create-language []
-  (binding [*client*
-            (fn [request]
-              (assert (= :post (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "api.other.com" (:server-name request)))
-              (assert (= (languages-path) (:uri request)))
-              (assert (= german (:body request))))]
-    (create-language german)))
-
-(defn test-update-language []
-  (binding [*client*
-            (fn [request]
-              (assert (= :put (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "api.other.com" (:server-name request)))
-              (assert (= (language-path german) (:uri request)))
-              (assert (= german (:body request))))]
-    (update-language german)))
-
-(defn test-delete-language []
-  (binding [*client*
-            (fn [request]
-              (assert (= :delete (:request-method request)))
-              (assert (= :https (:scheme request)))
-              (assert (= "api.other.com" (:server-name request)))
-              (assert (= (language-path german) (:uri request)))
-              (assert (= {} (:body request))))]
-    (delete-language german)))
+(defn test-new-country-of-continent? []
+  (binding
+      [*client*
+       (fn [request]
+         (assert (= :head (:request-method request)))
+         (assert (= :https (:scheme request)))
+         (assert (= "example.com" (:server-name request)))
+         (assert (= 443 (:server-port request)))
+         (assert (= (country-of-continent-path europe germany) (:uri request)))
+         (assert (= {} (:body request))))]
+    (new-country-of-continent? europe germany)))
 
 (defn test []
-
-  (test-continents-path)
-  (test-continent-path)
-  (test-new-continent-path)
-  (test-edit-continent-path)
+  (test-continents-url)
+  (test-continent-url)
+  (test-new-continent-url)
+  (test-edit-continent-url)
   (test-continent)
   (test-continents)
   (test-create-continent)
   (test-update-continent)
   (test-delete-continent)
-
-  (test-countries-path)
-  (test-country-path)
-  (test-new-country-path)
-  (test-edit-country-path)
+  (test-new-continent?)
+  (test-countries-url)
+  (test-country-url)
+  (test-new-country-url)
+  (test-edit-country-url)
   (test-country)
   (test-countries)
   (test-create-country)
   (test-update-country)
   (test-delete-country)
-
-  (test-countries-in-continent-path)
-  (test-country-in-continent-path)
-  (test-countries-in-continent)
-  (test-country-in-continent)
-  (test-create-country-in-continent)
-  (test-update-country-in-continent)
-  (test-delete-country-in-continent)
-
-  (test-languages-path)
-  (test-language-path)
-  (test-new-language-path)
-  (test-edit-language-path)
-  (test-language)
-  (test-languages)
-  (test-create-language)
-  (test-update-language)
-  (test-delete-language))
+  (test-new-country?)
+  (test-countries-of-continent-url)
+  (test-country-of-continent-url)
+  (test-new-country-of-continent-url)
+  (test-edit-country-of-continent-url)
+  (test-countries-of-continent)
+  (test-country-of-continent)
+  (test-create-country-of-continent)
+  (test-update-country-of-continent)
+  (test-delete-country-of-continent)
+  (test-new-country-of-continent?))
