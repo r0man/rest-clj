@@ -15,11 +15,14 @@
 
 (defn meta-body [response]
   ;; TODO: instance? clojure.lang.IMeta
-  (if (or (map? (:body response))
-          (sequential? (:body response)))
-    (with-meta (:body response)
-      (dissoc response :body))
-    (:body response)))
+  (cond
+   (or (map? (:body response))
+       (sequential? (:body response)))
+   (with-meta (:body response)
+     (dissoc response :body))
+   (= 404 (:status response))
+   nil
+   :else (:body response)))
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
