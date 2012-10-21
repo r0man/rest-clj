@@ -1,6 +1,6 @@
 (ns rest.test.io
-  (:use [clojure.data.json :only (json-str read-json)]
-        clojure.test
+  (:use clojure.test
+        rest.json
         rest.io))
 
 (deftest test-content-type

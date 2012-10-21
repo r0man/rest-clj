@@ -4,11 +4,11 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.0"
-  :dependencies [[clj-http "0.5.3-SNAPSHOT"]
+  :dependencies [[clj-http "0.5.6"]
                  [clj-stacktrace "0.2.4"]
                  [cljs-http "0.0.2-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
-                 [org.clojure/data.json "0.1.2"]
+                 [org.clojure/data.json "0.2.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "0.2.7"]]
   :hooks [leiningen.cljsbuild]
