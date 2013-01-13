@@ -13,7 +13,6 @@
   "Assoc :remote-addr to the request."
   [client]
   (fn [request]
-    (prn request)
     (client
      (if (blank? (:remote-addr request))
        (assoc request :remote-addr "127.0.0.1")
