@@ -26,7 +26,7 @@
     (is (= "example.com" (:server-name request)))
          (is (= 80 (:server-port request)))
     (is (= "/continents/eu-europe" (:uri request)))
-    (is (= {} (:body request))))
+    (is (nil? (:body request))))
   (let [request (to-request {:uri europe})]
     (is (= :get (:request-method request)))
     (is (= :http (:scheme request)))

@@ -52,7 +52,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (continent europe)))
 
 (deftest test-continents
@@ -64,7 +64,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (continents-path) (:uri request)))
-       (is (= {} (:body request)))
+       (is (nil? (:body request)))
        (is (= {:page 1} (:query-params request))))]
     (continents {:query-params {:page 1}})))
 
@@ -101,7 +101,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (delete-continent europe)))
 
 (deftest test-new-continent?
@@ -113,7 +113,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (new-continent? europe)))
 
 ;; COUNTRIES
@@ -139,7 +139,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (country germany)))
 
 (deftest test-countries
@@ -151,7 +151,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (countries-path) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (countries)))
 
 (deftest test-create-country
@@ -187,7 +187,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (delete-country germany)))
 
 (deftest test-new-country?
@@ -199,7 +199,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (new-country? germany)))
 
 ;; COUNTRIES IN CONTINENT
@@ -229,7 +229,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (countries-of-continent-path europe) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (countries-of-continent europe)))
 
 (deftest test-country-of-continent
@@ -241,7 +241,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (country-of-continent europe germany)))
 
 (deftest test-create-country-of-continent
@@ -277,7 +277,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (delete-country-of-continent europe germany)))
 
 (deftest test-new-country-of-continent?
@@ -289,7 +289,7 @@
        (is (= "example.com" (:server-name request)))
        (is (= 443 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
-       (is (= {} (:body request))))]
+       (is (nil? (:body request))))]
     (new-country-of-continent? europe germany)))
 
 ;; ;; (comment
