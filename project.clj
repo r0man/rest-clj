@@ -4,14 +4,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.0"
-  :dependencies [[clj-http "0.6.1"]
+  :dependencies [[clj-http "0.6.3"]
                  [clj-stacktrace "0.2.5"]
                  [cljs-http "0.0.2-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
-                 [org.clojure/clojurescript "0.0-1450"]
                  [org.clojure/data.json "0.2.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
-  :plugins [[lein-cljsbuild "0.2.9"]]
+  :plugins [[lein-cljsbuild "0.2.10"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
                                    :optimizations :whitespace
