@@ -10,20 +10,20 @@
                  [org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.2.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
-  :plugins [[lein-cljsbuild "0.2.10"]]
+  :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-path "test/cljs"}
+                        :source-paths ["test/cljs"]}
                        {:compiler {:output-to "target/rest-debug.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-path "src/cljs"}
+                        :source-paths ["src/cljs"]}
                        {:compiler {:output-to "target/rest.js"
                                    :optimizations :advanced
                                    :pretty-print true}
-                        :source-path "src/cljs"
+                        :source-paths ["src/cljs"]
                         :jar true}]
               :crossover-jar true
               :crossover-path ".crossover-cljs"
