@@ -44,7 +44,7 @@
       wrap-output-coercion
       wrap-stacktrace-client))
 
-(defn test-handler [handler]
+(defn test-client [handler]
   (-> handler
       client/wrap-query-params
       client/wrap-basic-auth
