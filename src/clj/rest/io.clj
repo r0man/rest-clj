@@ -61,23 +61,23 @@
         (assoc-in [:headers "content-type"] "application/json"))
     request))
 
-(defn wrap-accept [handler & [content-type]]
+(defn wrap-accept [client & [content-type]]
   (let [content-type (or content-type *content-type*)]
-    #(handler (assoc-in %1 [:headers "accept"] content-type))))
+    #(client (assoc-in %1 [:headers "accept"] content-type))))
 
-(defn wrap-debug [handler]
+(defn wrap-debug [client]
   (fn [request]
     (prn ">>> REQUEST >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     (prn request)
     (println)
-    (let [response (handler request)]
+    (let [response (client request)]
       (prn ">>> RESPONSE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
       (prn response)
       (println)
       response)))
 
-(defn wrap-input-coercion [handler]
-  #(handler (serialize %1)))
+(defn wrap-input-coercion [client]
+  #(client (serialize %1)))
 
-(defn wrap-output-coercion [handler]
-  #(deserialize (handler %1)))
+(defn wrap-output-coercion [client]
+  #(deserialize (client %1)))
