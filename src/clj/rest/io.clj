@@ -26,7 +26,8 @@
 
 (defmulti deserialize
   "Deserialize the body of `response` according to the Content-Type header."
-  (fn [response] (content-type response)))
+  (fn [response]
+    (content-type response)))
 
 (defmethod deserialize :default
   [response] response)
@@ -45,7 +46,8 @@
 
 (defmulti serialize
   "Serialize the body of `response` according to the Content-Type header."
-  (fn [request] (keyword (or (content-type request) *content-type*))))
+  (fn [request]
+    (keyword (or (content-type request) *content-type*))))
 
 (defmethod serialize :application/clojure
   [{:keys [body] :as request}]

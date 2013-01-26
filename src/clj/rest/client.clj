@@ -1,13 +1,35 @@
 (ns rest.client
+  (:import java.io.ByteArrayOutputStream)
   (:require [clj-http.client :as client]
             [clj-http.core :refer [request]]
-            [clojure.string :refer [blank?]]
+            [clojure.string :refer [blank? lower-case]]
+            [inflections.transform :refer [transform-keys]]
             [rest.stacktrace :refer [wrap-stacktrace-client]]
-            [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]
+            [rest.io :refer [wrap-accept wrap-debug wrap-input-coercion wrap-output-coercion]]
             [routes.helper :refer [parse-url]]))
 
 (defprotocol IRequest
   (to-request [obj] "Make a Ring request map from `obj`."))
+
+(defn slurp-to-bytes
+  [in]
+  (if in
+    (let [buf (byte-array 4096)
+          out (ByteArrayOutputStream.)]
+      (loop []
+        (let [r (.read in buf)]
+          (when (not= r -1)
+            (.write out buf 0 r)
+            (recur))))
+      (.toByteArray out))))
+
+(defn wrap-ring
+  "Return the Ring response map into a clj-http compatible format."
+  [client]
+  (fn [request]
+    (-> (client request)
+        (update-in [:body] slurp-to-bytes)
+        (update-in [:headers] #(transform-keys %1 lower-case)))))
 
 (defn wrap-remote-addr
   "Assoc :remote-addr to the request."
@@ -46,6 +68,7 @@
 
 (defn test-client [handler]
   (-> handler
+      wrap-ring
       client/wrap-query-params
       client/wrap-basic-auth
       client/wrap-oauth
@@ -53,8 +76,8 @@
       client/wrap-url
       client/wrap-redirects
       client/wrap-decompression
-      ;; client/wrap-input-coercion
-      ;; client/wrap-output-coercion
+      client/wrap-input-coercion
+      client/wrap-output-coercion
       ;; client/wrap-exceptions
       client/wrap-accept
       client/wrap-accept-encoding
