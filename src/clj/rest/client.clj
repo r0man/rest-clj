@@ -1,5 +1,5 @@
 (ns rest.client
-  (:import java.io.ByteArrayOutputStream)
+  (:import [java.io ByteArrayOutputStream InputStream])
   (:require [clj-http.client :as client]
             [clj-http.core :refer [request]]
             [clojure.string :refer [blank? lower-case]]
@@ -13,15 +13,20 @@
 
 (defn slurp-to-bytes
   [in]
-  (if in
-    (let [buf (byte-array 4096)
-          out (ByteArrayOutputStream.)]
-      (loop []
-        (let [r (.read in buf)]
-          (when (not= r -1)
-            (.write out buf 0 r)
-            (recur))))
-      (.toByteArray out))))
+  (cond
+   (nil? in)
+   in
+   (string? in)
+   (.getBytes in)
+   (instance? InputStream in)
+   (let [buf (byte-array 4096)
+         out (ByteArrayOutputStream.)]
+     (loop []
+       (let [r (.read in buf)]
+         (when (not= r -1)
+           (.write out buf 0 r)
+           (recur))))
+     (.toByteArray out))))
 
 (defn wrap-ring
   "Return the Ring response map into a clj-http compatible format."
