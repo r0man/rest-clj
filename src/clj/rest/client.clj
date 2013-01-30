@@ -1,5 +1,6 @@
 (ns rest.client
-  (:import [java.io ByteArrayOutputStream InputStream])
+  (:import [java.io ByteArrayOutputStream InputStream]
+           org.apache.http.entity.StringEntity)
   (:require [clj-http.client :as client]
             [clj-http.core :refer [request]]
             [clojure.string :refer [blank? lower-case]]
@@ -11,7 +12,7 @@
 (defprotocol IRequest
   (to-request [obj] "Make a Ring request map from `obj`."))
 
-(defn slurp-to-bytes
+(defn to-bytes
   [in]
   (cond
    (nil? in)
@@ -28,12 +29,22 @@
            (recur))))
      (.toByteArray out))))
 
+(defn to-input-stream
+  [in]
+  (cond
+   (nil? in)
+   in
+   (instance? StringEntity in)
+   (.getContent in)))
+
 (defn wrap-ring
   "Return the Ring response map into a clj-http compatible format."
   [client]
   (fn [request]
-    (-> (client request)
-        (update-in [:body] slurp-to-bytes)
+    (-> (client
+         (-> request
+             (update-in [:body] to-input-stream)))
+        (update-in [:body] to-bytes)
         (update-in [:headers] #(transform-keys %1 lower-case)))))
 
 (defn wrap-remote-addr

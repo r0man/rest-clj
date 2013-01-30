@@ -1,14 +1,14 @@
 (ns rest.json
-  (:require [clojure.data.json :as data]
+  (:require [cheshire.core :as json]
             [clojure.string :refer [blank?]]))
 
 (defn json-str [arg]
-  (data/write-str arg))
+  (json/encode arg))
 
 (defn read-json [s]
   (cond
    (and (string? s)
         (not (blank? s)))
-   (data/read-str s :key-fn keyword)
+   (json/decode s true)
    (instance? java.io.InputStream s)
-   (read-json (slurp s))))
+   (json/decode (slurp s) true)))

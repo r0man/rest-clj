@@ -53,6 +53,7 @@
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] prn-str)
+        (assoc :content-type "application/clojure")
         (assoc-in [:headers "content-type"] "application/clojure"))
     request))
 
@@ -60,6 +61,7 @@
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] json-str)
+        (assoc :content-type "application/json")
         (assoc-in [:headers "content-type"] "application/json"))
     request))
 
