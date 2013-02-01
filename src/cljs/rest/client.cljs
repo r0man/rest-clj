@@ -24,8 +24,9 @@
 
 (def ^:dynamic *client*
   (-> client/request
-      wrap-accept
-      wrap-body-meta))
+      (client/wrap-credentials true)
+      (wrap-accept)
+      (wrap-body-meta)))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]
   (cond
