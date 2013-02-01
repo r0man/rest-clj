@@ -13,3 +13,4 @@ pom.xml
 /.lein-cljsbuild-repl
 /out
 /repl
+/.lein-repl-history

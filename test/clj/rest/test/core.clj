@@ -11,7 +11,7 @@
 (def german {:iso-639-1 "de" :name "German"})
 
 (def ^:dynamic *server*
-  {:scheme :https :server-name "burningswell.dev" :server-port 443})
+  {:scheme :http :server-name "api.burningswell.dev" :server-port 80})
 
 (defroute root []
   ["/"]
@@ -32,25 +32,25 @@
 ;; CONTINENTS
 
 (deftest test-continents-url
-  (is (= "https://burningswell.dev/continents" (continents-url))))
+  (is (= "http://api.burningswell.dev/continents" (continents-url))))
 
 (deftest test-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe" (continent-url europe))))
+  (is (= "http://api.burningswell.dev/continents/1-europe" (continent-url europe))))
 
 (deftest test-new-continent-url
-  (is (= "https://burningswell.dev/continents/new" (new-continent-url))))
+  (is (= "http://api.burningswell.dev/continents/new" (new-continent-url))))
 
 (deftest test-edit-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe/edit" (edit-continent-url europe))))
+  (is (= "http://api.burningswell.dev/continents/1-europe/edit" (edit-continent-url europe))))
 
 (deftest test-continent
   (with-redefs
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (nil? (:body request))))]
     (continent europe)))
@@ -60,9 +60,9 @@
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continents-path) (:uri request)))
        (is (nil? (:body request)))
        (is (= {:page 1} (:query-params request))))]
@@ -73,9 +73,9 @@
     [*client*
      (fn [request]
        (is (= :post (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continents-path) (:uri request)))
        (is (= europe (:body request))))]
     (create-continent europe)))
@@ -85,9 +85,9 @@
     [*client*
      (fn [request]
        (is (= :put (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (= europe (:body request))))]
     (update-continent europe)))
@@ -97,9 +97,9 @@
     [*client*
      (fn [request]
        (is (= :delete (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (nil? (:body request))))]
     (delete-continent europe)))
@@ -109,9 +109,9 @@
     [*client*
      (fn [request]
        (is (= :head (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (continent-path europe) (:uri request)))
        (is (nil? (:body request))))]
     (new-continent? europe)))
@@ -119,25 +119,25 @@
 ;; COUNTRIES
 
 (deftest test-countries-url
-  (is (= "https://burningswell.dev/countries" (countries-url))))
+  (is (= "http://api.burningswell.dev/countries" (countries-url))))
 
 (deftest test-country-url
-  (is (= "https://burningswell.dev/countries/de-germany" (country-url germany))))
+  (is (= "http://api.burningswell.dev/countries/de-germany" (country-url germany))))
 
 (deftest test-new-country-url
-  (is (= "https://burningswell.dev/countries/new" (new-country-url))))
+  (is (= "http://api.burningswell.dev/countries/new" (new-country-url))))
 
 (deftest test-edit-country-url
-  (is (= "https://burningswell.dev/countries/de-germany/edit" (edit-country-url germany))))
+  (is (= "http://api.burningswell.dev/countries/de-germany/edit" (edit-country-url germany))))
 
 (deftest test-country
   (with-redefs
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (nil? (:body request))))]
     (country germany)))
@@ -147,9 +147,9 @@
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (countries-path) (:uri request)))
        (is (nil? (:body request))))]
     (countries)))
@@ -159,9 +159,9 @@
     [*client*
      (fn [request]
        (is (= :post (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (countries-path) (:uri request)))
        (is (= germany (:body request))))]
     (create-country germany)))
@@ -171,9 +171,9 @@
     [*client*
      (fn [request]
        (is (= :put (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (= germany (:body request))))]
     (update-country germany)))
@@ -183,9 +183,9 @@
     [*client*
      (fn [request]
        (is (= :delete (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (nil? (:body request))))]
     (delete-country germany)))
@@ -195,9 +195,9 @@
     [*client*
      (fn [request]
        (is (= :head (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-path germany) (:uri request)))
        (is (nil? (:body request))))]
     (new-country? germany)))
@@ -205,19 +205,19 @@
 ;; COUNTRIES IN CONTINENT
 
 (deftest test-countries-of-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe/countries"
+  (is (= "http://api.burningswell.dev/continents/1-europe/countries"
          (countries-of-continent-url europe))))
 
 (deftest test-country-of-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe/countries/de-germany"
+  (is (= "http://api.burningswell.dev/continents/1-europe/countries/de-germany"
          (country-of-continent-url europe germany))))
 
 (deftest test-new-country-of-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe/countries/new"
+  (is (= "http://api.burningswell.dev/continents/1-europe/countries/new"
          (new-country-of-continent-url europe))))
 
 (deftest test-edit-country-of-continent-url
-  (is (= "https://burningswell.dev/continents/1-europe/countries/de-germany/edit"
+  (is (= "http://api.burningswell.dev/continents/1-europe/countries/de-germany/edit"
          (edit-country-of-continent-url europe germany))))
 
 (deftest test-countries-of-continent
@@ -225,9 +225,9 @@
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (countries-of-continent-path europe) (:uri request)))
        (is (nil? (:body request))))]
     (countries-of-continent europe)))
@@ -237,9 +237,9 @@
     [*client*
      (fn [request]
        (is (= :get (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (nil? (:body request))))]
     (country-of-continent europe germany)))
@@ -249,9 +249,9 @@
     [*client*
      (fn [request]
        (is (= :post (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (countries-of-continent-path europe) (:uri request)))
        (is (= germany (:body request))))]
     (create-country-of-continent europe germany)))
@@ -261,9 +261,9 @@
     [*client*
      (fn [request]
        (is (= :put (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (= germany (:body request))))]
     (update-country-of-continent europe germany)))
@@ -273,9 +273,9 @@
     [*client*
      (fn [request]
        (is (= :delete (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (nil? (:body request))))]
     (delete-country-of-continent europe germany)))
@@ -285,22 +285,22 @@
     [*client*
      (fn [request]
        (is (= :head (:request-method request)))
-       (is (= :https (:scheme request)))
-       (is (= "burningswell.dev" (:server-name request)))
-       (is (= 443 (:server-port request)))
+       (is (= :http (:scheme request)))
+       (is (= "api.burningswell.dev" (:server-name request)))
+       (is (= 80 (:server-port request)))
        (is (= (country-of-continent-path europe germany) (:uri request)))
        (is (nil? (:body request))))]
     (new-country-of-continent? europe germany)))
 
 ;; ;; (comment
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (continent (first (continents))))
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (save-continent (first (continents))))
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (create-continent {:name "TEST"
 ;; ;;                        :iso-3166-1-alpha-2 "xx"
 ;; ;;                        :iso-3166-1-alpha-3 "xxx"
@@ -308,7 +308,7 @@
 ;; ;;                        :geonames-id 123123
 ;; ;;                        :location {:latitude 0 :longitude 0}}))
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (save-continent {:name "TEST"
 ;; ;;                      :iso-3166-1-alpha-2 "xx"
 ;; ;;                      :iso-3166-1-alpha-3 "xxx"
@@ -316,7 +316,7 @@
 ;; ;;                      :geonames-id 123123
 ;; ;;                      :location {:latitude 0 :longitude 0}}))
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (new-continent? {:name "TEST"
 ;; ;;                      :iso-3166-1-alpha-2 "xx"
 ;; ;;                      :iso-3166-1-alpha-3 "xxx"
@@ -324,7 +324,7 @@
 ;; ;;                      :geonames-id 123123
 ;; ;;                      :location {:latitude 0 :longitude 0}}))
 
-;; ;;   (with-server "http://api.burningswell.dev"
+;; ;;   (with-server "http://api.api.burningswell.dev"
 ;; ;;     (delete-continent {:iso-3166-1-alpha-2 "xx"}))
 
 ;; ;;   )

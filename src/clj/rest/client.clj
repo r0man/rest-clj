@@ -6,7 +6,7 @@
             [clojure.string :refer [blank? lower-case]]
             [inflections.transform :refer [transform-keys]]
             [rest.stacktrace :refer [wrap-stacktrace-client]]
-            [rest.io :refer [wrap-accept wrap-debug wrap-input-coercion wrap-output-coercion]]
+            [rest.io :refer [body wrap-accept wrap-debug wrap-input-coercion wrap-output-coercion]]
             [routes.helper :refer [parse-url]]))
 
 (defprotocol IRequest
@@ -36,6 +36,11 @@
    in
    (instance? StringEntity in)
    (.getContent in)))
+
+(defn wrap-body-meta
+  "Returns a client that returns the :body of the response, with the
+  rest of the request added as meta data when possible."
+  [client] (fn [request] (body (client request))))
 
 (defn wrap-ring
   "Return the Ring response map into a clj-http compatible format."
@@ -80,7 +85,8 @@
       wrap-accept
       wrap-input-coercion
       wrap-output-coercion
-      wrap-stacktrace-client))
+      wrap-stacktrace-client
+      wrap-body-meta))
 
 (defn test-client [handler]
   (-> handler
@@ -108,7 +114,8 @@
       wrap-input-coercion
       wrap-output-coercion
       wrap-remote-addr
-      wrap-stacktrace-client))
+      wrap-stacktrace-client
+      wrap-body-meta))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]
   (cond

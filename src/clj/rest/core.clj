@@ -40,7 +40,7 @@
     `(do
        (defroute ~name# [~@(butlast (:args route#))]
          [~(plural-pattern pattern#) ~@(butlast (:params route#))]
-          ~@(mapcat concat (seq options#)))
+         ~@(mapcat concat (seq options#)))
 
        (defroute ~singular# [~@(:args route#)]
          [~(singular-pattern pattern#) ~@params#]
@@ -53,24 +53,24 @@
          ["/edit"] :root ~(singular-route name#))
 
        (defn ~name# [~@(butlast (route-args route#)) & [~'opts]]
-         (rest.io/meta-body (http/get (~plural-url# ~@(butlast (route-args route#))) ~'opts)))
+         (rest.http/get (~plural-url# ~@(butlast (route-args route#))) ~'opts))
 
        (defn ~singular# [~@(route-args route#) & [~'opts]]
-         (rest.io/meta-body (http/get (~singular-url# ~@(route-args route#)) ~'opts)))
+         (rest.http/get (~singular-url# ~@(route-args route#)) ~'opts))
 
        (defn ~(symbol (str "create-" singular#)) [~@(route-args route#) & [{:as ~'opts}]]
-         (rest.io/meta-body (http/post (~plural-url# ~@(butlast (route-args route#)))
-                                       (assoc ~'opts :body ~(last (route-args route#))))))
+         (rest.http/post (~plural-url# ~@(butlast (route-args route#)))
+                         (assoc ~'opts :body ~(last (route-args route#)))))
 
        (defn ~(symbol (str "delete-" singular#)) [~@(route-args route#) & [~'opts]]
-         (rest.io/meta-body (http/delete (~singular-url# ~@(route-args route#)) ~'opts)))
+         (rest.http/delete (~singular-url# ~@(route-args route#)) ~'opts))
 
        (defn ~(symbol (str "update-" singular#)) [~@(route-args route#) & [{:as ~'opts}]]
-         (rest.io/meta-body (http/put (~singular-url# ~@(route-args route#))
-                                      (assoc ~'opts :body ~(last (route-args route#))))))
+         (rest.http/put (~singular-url# ~@(route-args route#))
+                        (assoc ~'opts :body ~(last (route-args route#)))))
 
        (defn ~(symbol (str "new-" singular# "?")) [~@(route-args route#) & [~'opts]]
-         (not (= 200 (:status (http/head (~singular-url# ~@(route-args route#)) ~'opts)))))
+         (not (= 200 (:status (rest.http/head (~singular-url# ~@(route-args route#)) ~'opts)))))
 
        (defn ~(symbol (str "save-" singular#)) [~@(route-args route#) & [~'opts]]
          (if (~(symbol (str "new-" singular# "?")) ~@(route-args route#) ~'opts)

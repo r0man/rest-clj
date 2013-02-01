@@ -2,17 +2,30 @@
   (:require [cljs-http.client :as client]
             [clojure.string :refer [blank?]]
             [goog.Uri :as uri]
-            [rest.io :refer [wrap-accept wrap-input-coercion wrap-output-coercion]]
+            [goog.labs.async.SimpleResult :as SimpleResult]
+            [rest.io :refer [body wrap-accept]]
             [routes.helper :refer [parse-url]]))
+
+(meta (with-meta [] {}))
 
 (defprotocol IRequest
   (to-request [obj] "Make a Ring request map from `obj`."))
 
+(defn wrap-body-meta
+  "Returns a client that returns the :body of the response, with the
+  rest of the request added as meta data when possible."
+  [client]
+  (fn [request]
+    (let [result (goog.labs.async.SimpleResult.)]
+      (doto (client request)
+        (client/on-success #(.setValue result (body %1)))
+        (client/on-error #(.setError result (body %1))))
+      result)))
+
 (def ^:dynamic *client*
   (-> client/request
       wrap-accept
-      wrap-input-coercion
-      wrap-output-coercion))
+      wrap-body-meta))
 
 (defn- parse-map [{:keys [server-name uri] :as m}]
   (cond

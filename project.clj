@@ -8,11 +8,12 @@
                  [clj-stacktrace "0.2.5"]
                  [cljs-http "0.0.2-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
+                 [org.clojure/clojurescript "0.0-1552"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print true}
                         :source-paths ["test/cljs"]}
                        {:compiler {:output-to "target/rest-debug.js"
@@ -25,9 +26,7 @@
                         :source-paths ["src/cljs"]
                         :jar true}]
               :crossover-jar true
-              :crossover-path ".crossover-cljs"
-              :crossovers [rest.http
-                           rest.io]
+              :crossovers [rest.http rest.io]
               :repl-listen-port 9000
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
