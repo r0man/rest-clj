@@ -2,7 +2,7 @@
   (:require [goog.Uri :as uri]
             [rest.client :as client]))
 
-(def europe "http://example.com/continents/eu-europe")
+(def europe "http://burningswell.dev/continents/eu-europe")
 
 (defn test-send-request []
   (let [body [{:name "Germany"} {:name "Spain"}]]
@@ -10,16 +10,16 @@
               (fn [request]
                 (assert (= :get (:request-method request)))
                 (assert (= :http (:scheme request)))
-                (assert (= "example.com" (:server-name request)))
+                (assert (= "burningswell.dev" (:server-name request)))
                 (assert (= 80 (:server-port request)))
                 (assert (= "/countries" (:uri request))))]
-      (client/send-request :get "http://example.com/countries"))))
+      (client/send-request :get "http://burningswell.dev/countries"))))
 
 (defn test-to-request []
   (let [request (client/to-request europe)]
     (assert (= :get (:request-method request)))
     (assert (= :http (:scheme request)))
-    (assert (= "example.com" (:server-name request)))
+    (assert (= "burningswell.dev" (:server-name request)))
     (assert (= 80 (:server-port request)))
     (assert (= "/continents/eu-europe" (:uri request)))
     (assert (= {} (:body request))))

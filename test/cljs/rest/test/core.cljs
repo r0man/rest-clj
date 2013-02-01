@@ -11,7 +11,7 @@
 (def german {:iso-639-1 "de" :name "German"})
 
 (def ^:dynamic *server*
-  {:scheme :https :server-name "example.com" :server-port 443})
+  {:scheme :https :server-name "burningswell.dev" :server-port 443})
 
 (defroute root []
   ["/"]
@@ -32,16 +32,16 @@
 ;; CONTINENTS
 
 (defn test-continents-url []
-  (assert (= "https://example.com/continents" (continents-url))))
+  (assert (= "https://burningswell.dev/continents" (continents-url))))
 
 (defn test-continent-url []
-  (assert (= "https://example.com/continents/1-europe" (continent-url europe))))
+  (assert (= "https://burningswell.dev/continents/1-europe" (continent-url europe))))
 
 (defn test-new-continent-url []
-  (assert (= "https://example.com/continents/new" (new-continent-url))))
+  (assert (= "https://burningswell.dev/continents/new" (new-continent-url))))
 
 (defn test-edit-continent-url []
-  (assert (= "https://example.com/continents/1-europe/edit" (edit-continent-url europe))))
+  (assert (= "https://burningswell.dev/continents/1-europe/edit" (edit-continent-url europe))))
 
 (defn test-continent []
   (binding
@@ -49,7 +49,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continent-path europe) (:uri request)))
          (assert (= {} (:body request))))]
@@ -61,7 +61,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continents-path) (:uri request)))
          (assert (= {} (:body request)))
@@ -74,7 +74,7 @@
        (fn [request]
          (assert (= :post (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continents-path) (:uri request)))
          (assert (= europe (:body request))))]
@@ -86,7 +86,7 @@
        (fn [request]
          (assert (= :put (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continent-path europe) (:uri request)))
          (assert (= europe (:body request))))]
@@ -98,7 +98,7 @@
        (fn [request]
          (assert (= :delete (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continent-path europe) (:uri request)))
          (assert (= {} (:body request))))]
@@ -110,7 +110,7 @@
        (fn [request]
          (assert (= :head (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (continent-path europe) (:uri request)))
          (assert (= {} (:body request))))]
@@ -119,16 +119,16 @@
 ;; COUNTRIES
 
 (defn test-countries-url []
-  (assert (= "https://example.com/countries" (countries-url))))
+  (assert (= "https://burningswell.dev/countries" (countries-url))))
 
 (defn test-country-url []
-  (assert (= "https://example.com/countries/de-germany" (country-url germany))))
+  (assert (= "https://burningswell.dev/countries/de-germany" (country-url germany))))
 
 (defn test-new-country-url []
-  (assert (= "https://example.com/countries/new" (new-country-url))))
+  (assert (= "https://burningswell.dev/countries/new" (new-country-url))))
 
 (defn test-edit-country-url []
-  (assert (= "https://example.com/countries/de-germany/edit" (edit-country-url germany))))
+  (assert (= "https://burningswell.dev/countries/de-germany/edit" (edit-country-url germany))))
 
 (defn test-country []
   (binding
@@ -136,7 +136,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-path germany) (:uri request)))
          (assert (= {} (:body request))))]
@@ -148,7 +148,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (countries-path) (:uri request)))
          (assert (= {} (:body request))))]
@@ -160,7 +160,7 @@
        (fn [request]
          (assert (= :post (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (countries-path) (:uri request)))
          (assert (= germany (:body request))))]
@@ -172,7 +172,7 @@
        (fn [request]
          (assert (= :put (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-path germany) (:uri request)))
          (assert (= germany (:body request))))]
@@ -184,7 +184,7 @@
        (fn [request]
          (assert (= :delete (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-path germany) (:uri request)))
          (assert (= {} (:body request))))]
@@ -196,7 +196,7 @@
        (fn [request]
          (assert (= :head (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-path germany) (:uri request)))
          (assert (= {} (:body request))))]
@@ -205,19 +205,19 @@
 ;; COUNTRIES IN CONTINENT
 
 (defn test-countries-of-continent-url []
-  (assert (= "https://example.com/continents/1-europe/countries"
+  (assert (= "https://burningswell.dev/continents/1-europe/countries"
              (countries-of-continent-url europe))))
 
 (defn test-country-of-continent-url []
-  (assert (= "https://example.com/continents/1-europe/countries/de-germany"
+  (assert (= "https://burningswell.dev/continents/1-europe/countries/de-germany"
              (country-of-continent-url europe germany))))
 
 (defn test-new-country-of-continent-url []
-  (assert (= "https://example.com/continents/1-europe/countries/new"
+  (assert (= "https://burningswell.dev/continents/1-europe/countries/new"
              (new-country-of-continent-url europe))))
 
 (defn test-edit-country-of-continent-url []
-  (assert (= "https://example.com/continents/1-europe/countries/de-germany/edit"
+  (assert (= "https://burningswell.dev/continents/1-europe/countries/de-germany/edit"
              (edit-country-of-continent-url europe germany))))
 
 (defn test-countries-of-continent []
@@ -226,7 +226,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (countries-of-continent-path europe) (:uri request)))
          (assert (= {} (:body request))))]
@@ -238,7 +238,7 @@
        (fn [request]
          (assert (= :get (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-of-continent-path europe germany) (:uri request)))
          (assert (= {} (:body request))))]
@@ -250,7 +250,7 @@
        (fn [request]
          (assert (= :post (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (countries-of-continent-path europe) (:uri request)))
          (assert (= germany (:body request))))]
@@ -262,7 +262,7 @@
        (fn [request]
          (assert (= :put (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-of-continent-path europe germany) (:uri request)))
          (assert (= germany (:body request))))]
@@ -274,7 +274,7 @@
        (fn [request]
          (assert (= :delete (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-of-continent-path europe germany) (:uri request)))
          (assert (= {} (:body request))))]
@@ -286,7 +286,7 @@
        (fn [request]
          (assert (= :head (:request-method request)))
          (assert (= :https (:scheme request)))
-         (assert (= "example.com" (:server-name request)))
+         (assert (= "burningswell.dev" (:server-name request)))
          (assert (= 443 (:server-port request)))
          (assert (= (country-of-continent-path europe germany) (:uri request)))
          (assert (= {} (:body request))))]

@@ -3,7 +3,7 @@
   (:use clojure.test
         rest.client))
 
-(def europe "http://example.com/continents/eu-europe")
+(def europe "http://burningswell.dev/continents/eu-europe")
 
 (deftest test-send-request
   (let [body [{:name "Germany"} {:name "Spain"}]
@@ -13,24 +13,24 @@
        (fn [request]
          (is (= :get (:request-method request)))
          (is (= :http (:scheme request)))
-         (is (= "example.com" (:server-name request)))
+         (is (= "burningswell.dev" (:server-name request)))
          (is (= 80 (:server-port request)))
          (is (= "/countries" (:uri request)))
          response)]
-      (is (= response (send-request :get "http://example.com/countries"))))))
+      (is (= response (send-request :get "http://burningswell.dev/countries"))))))
 
 (deftest test-to-request
   (let [request (to-request europe)]
     (is (= :get (:request-method request)))
     (is (= :http (:scheme request)))
-    (is (= "example.com" (:server-name request)))
+    (is (= "burningswell.dev" (:server-name request)))
          (is (= 80 (:server-port request)))
     (is (= "/continents/eu-europe" (:uri request)))
     (is (nil? (:body request))))
   (let [request (to-request {:uri europe})]
     (is (= :get (:request-method request)))
     (is (= :http (:scheme request)))
-    (is (= "example.com" (:server-name request)))
+    (is (= "burningswell.dev" (:server-name request)))
     (is (= 80 (:server-port request)))
     (is (= "/continents/eu-europe" (:uri request)))
     (is (= request (to-request request))))
