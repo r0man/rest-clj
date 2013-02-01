@@ -4,7 +4,7 @@
    [clojure.string :refer [blank? replace]]
    [rest.json :refer [json-str read-json]]))
 
-(def ^:dynamic *content-type* "application/json")
+(def ^:dynamic *content-type* "application/clojure")
 
 (defn content-type
   "Returns the value of the Content-Type header of `request`."
