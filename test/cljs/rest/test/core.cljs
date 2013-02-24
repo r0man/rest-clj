@@ -67,8 +67,8 @@
          (assert (= 80 (:server-port request)))
          (assert (= (continents-path) (:uri request)))
          (assert (= {} (:body request)))
-         (assert (= {:page 1} (:query-params request))))]
-    (continents {:query-params {:page 1}})))
+         (assert (= {:page 1 :per-page 20} (:query-params request))))]
+    (continents :page 1 :per-page 20)))
 
 (defn test-create-continent []
   (binding

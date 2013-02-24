@@ -65,8 +65,8 @@
        (is (= 80 (:server-port request)))
        (is (= (continents-path) (:uri request)))
        (is (nil? (:body request)))
-       (is (= {:page 1} (:query-params request))))]
-    (continents {:query-params {:page 1}})))
+       (is (= {:page 1 :per-page 20} (:query-params request))))]
+    (continents :page 1 :per-page 20)))
 
 (deftest test-create-continent
   (with-redefs
