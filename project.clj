@@ -8,7 +8,6 @@
                  [clj-stacktrace "0.2.5"]
                  [cljs-http "0.0.2-SNAPSHOT"]
                  [org.clojure/clojure "1.4.0"]
-                 [org.clojure/clojurescript "0.0-1552"]
                  [routes-clj "0.0.2-SNAPSHOT"]]
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
