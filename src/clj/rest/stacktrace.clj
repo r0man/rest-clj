@@ -52,6 +52,8 @@
         (cond
          (= 404 (:status response))
          (assoc response :body nil)
+         (= 422 (:status response))
+         (throw (IllegalArgumentException. (str (:body response))))
          (unexceptional-status? (:status response))
          response
          :else (throw (make-throwable (:body response))))))))
