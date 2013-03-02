@@ -1,6 +1,7 @@
 (ns rest.stacktrace
   (:require [clj-http.client :refer [unexceptional-status?]]
-            [clj-stacktrace.core :refer [parse-exception]]))
+            [clj-stacktrace.core :refer [parse-exception]]
+            [slingshot.slingshot :refer [throw+]]))
 
 (defn format-class
   "Format the class name of a clj-stacktrace trace element."
@@ -53,7 +54,7 @@
          (= 404 (:status response))
          (assoc response :body nil)
          (= 422 (:status response))
-         (throw (IllegalArgumentException. (str (:body response))))
+         (throw+ {:type :http/unprocessable-entity :errors (:body response)})
          (unexceptional-status? (:status response))
          response
          :else (throw (make-throwable (:body response))))))))
