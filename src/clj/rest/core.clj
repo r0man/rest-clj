@@ -52,11 +52,11 @@
        (defroute ~(symbol (str "edit-" singular#)) []
          ["/edit"] :root ~(singular-route name#))
 
-       (defn ~name# [~@(butlast (route-args route#)) & {:as ~'opts}]
-         (apply rest.http/get (~plural-url# ~@(butlast (route-args route#))) {:query-params ~'opts}))
+       (defn ~name# [~@(butlast (route-args route#)) & [~'opts]]
+         (rest.http/get (~plural-url# ~@(butlast (route-args route#))) {:query-params ~'opts}))
 
-       (defn ~singular# [~@(route-args route#) & {:as ~'opts}]
-         (apply rest.http/get (~singular-url# ~@(route-args route#)) {:query-params ~'opts}))
+       (defn ~singular# [~@(route-args route#) & [~'opts]]
+         (rest.http/get (~singular-url# ~@(route-args route#)) {:query-params ~'opts}))
 
        (defn ~(symbol (str "create-" singular#)) [~@(route-args route#) & [{:as ~'opts}]]
          (rest.http/post (~plural-url# ~@(butlast (route-args route#)))

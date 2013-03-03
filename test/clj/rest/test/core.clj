@@ -66,7 +66,7 @@
        (is (= (continents-path) (:uri request)))
        (is (nil? (:body request)))
        (is (= {:page 1 :per-page 20} (:query-params request))))]
-    (continents :page 1 :per-page 20)))
+    (continents {:page 1 :per-page 20})))
 
 (deftest test-create-continent
   (with-redefs
@@ -229,8 +229,9 @@
        (is (= "api.burningswell.dev" (:server-name request)))
        (is (= 80 (:server-port request)))
        (is (= (countries-of-continent-path europe) (:uri request)))
-       (is (nil? (:body request))))]
-    (countries-of-continent europe)))
+       (is (nil? (:body request)))
+       (is (= {:page 1} (:query-params request))))]
+    (countries-of-continent europe {:page 1})))
 
 (deftest test-country-of-continent
   (with-redefs

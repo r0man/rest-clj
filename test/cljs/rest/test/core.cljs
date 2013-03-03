@@ -68,7 +68,7 @@
          (assert (= (continents-path) (:uri request)))
          (assert (= {} (:body request)))
          (assert (= {:page 1 :per-page 20} (:query-params request))))]
-    (continents :page 1 :per-page 20)))
+    (continents {:page 1 :per-page 20})))
 
 (defn test-create-continent []
   (binding
@@ -153,8 +153,9 @@
          (assert (= "api.burningswell.dev" (:server-name request)))
          (assert (= 80 (:server-port request)))
          (assert (= (countries-path) (:uri request)))
-         (assert (= {} (:body request))))]
-    (countries)))
+         (assert (= {} (:body request)))
+         (assert (= {:page 1} (:query-params request))))]
+    (countries {:page 1})))
 
 (defn test-create-country []
   (binding
@@ -231,8 +232,9 @@
          (assert (= "api.burningswell.dev" (:server-name request)))
          (assert (= 80 (:server-port request)))
          (assert (= (countries-of-continent-path europe) (:uri request)))
-         (assert (= {} (:body request))))]
-    (countries-of-continent europe)))
+         (assert (= {} (:body request)))
+         (assert (= {:page 1} (:query-params request))))]
+    (countries-of-continent europe {:page 1})))
 
 (defn test-country-of-continent []
   (binding
