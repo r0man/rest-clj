@@ -16,15 +16,15 @@
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-paths ["test/cljs"]}
+                        :source-paths ["test"]}
                        {:compiler {:output-to "target/rest-debug.js"
                                    :optimizations :whitespace
                                    :pretty-print true}
-                        :source-paths ["src/cljs"]}
+                        :source-paths ["src"]}
                        {:compiler {:output-to "target/rest.js"
                                    :optimizations :advanced
                                    :pretty-print true}
-                        :source-paths ["src/cljs"]
+                        :source-paths ["src"]
                         :jar true}]
               :crossover-jar true
               :crossovers [rest.http rest.io]
@@ -32,6 +32,4 @@
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
                "firefox" ["firefox" "http://http://localhost:9000/"]}
-              :test-commands {"unit-tests" ["runners/phantomjs.js" "target/rest-test.js"]}}
-  :source-paths ["src/clj"]
-  :test-paths ["test/clj"])
+              :test-commands {"unit-tests" ["runners/phantomjs.js" "target/rest-test.js"]}})
