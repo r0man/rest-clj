@@ -1,79 +1,71 @@
 (ns rest.test.http
-  (:require [rest.client :refer [*client*]]
+  (:require-macros [cemerick.cljs.test :refer [is deftest]])
+  (:require [cemerick.cljs.test :as t]
+            [rest.client :refer [*client*]]
             [rest.http :as http]))
 
 (def europe "http://api.burningswell.dev/continents/eu-europe")
 
-(defn test-delete []
+(deftest test-delete
   (binding [*client*
-            #(do (assert (= :delete (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :delete (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/delete europe)))
 
-(defn test-get []
+(deftest test-get
   (binding [*client*
-            #(do (assert (= :get (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :get (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/get europe)))
 
-(defn test-head []
+(deftest test-head
   (binding [*client*
-            #(do (assert (= :head (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :head (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/head europe)))
 
-(defn test-move []
+(deftest test-move
   (binding [*client*
-            #(do (assert (= :move (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :move (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/move europe)))
 
-(defn test-options []
+(deftest test-options
   (binding [*client*
-            #(do (assert (= :options (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :options (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/options europe)))
 
-(defn test-patch []
+(deftest test-patch
   (binding [*client*
-            #(do (assert (= :patch (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :patch (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/patch europe)))
 
-(defn test-post []
+(deftest test-post
   (binding [*client*
-            #(do (assert (= :post (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :post (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/post europe)))
 
-(defn test-put []
+(deftest test-put
   (binding [*client*
-            #(do (assert (= :put (:request-method %1)))
-                 (assert (= :http (:scheme %1)))
-                 (assert (= "api.burningswell.dev" (:server-name %1)))
-                 (assert (= "/continents/eu-europe" (:uri %1))))]
+            #(do (is (= :put (:request-method %1)))
+                 (is (= :http (:scheme %1)))
+                 (is (= "api.burningswell.dev" (:server-name %1)))
+                 (is (= "/continents/eu-europe" (:uri %1))))]
     (http/put europe)))
-
-(defn test []
-  (test-delete)
-  (test-get)
-  (test-head)
-  (test-move)
-  (test-options)
-  (test-patch)
-  (test-post)
-  (test-put))

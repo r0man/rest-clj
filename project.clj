@@ -10,10 +10,11 @@
                  [org.clojure/clojure "1.5.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]
                  [slingshot "0.10.3"]]
+  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.1"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
-                                   :optimizations :advanced
+                                   :optimizations :whitespace
                                    :pretty-print true}
                         :source-paths ["test/cljs"]}
                        {:compiler {:output-to "target/rest-debug.js"
@@ -31,6 +32,6 @@
               :repl-launch-commands
               {"chromium" ["chromium" "http://localhost:9000/"]
                "firefox" ["firefox" "http://http://localhost:9000/"]}
-              :test-commands {"unit" ["./test-cljs.sh"]}}
+              :test-commands {"unit-tests" ["runners/phantomjs.js" "target/rest-test.js"]}}
   :source-paths ["src/clj"]
   :test-paths ["test/clj"])
