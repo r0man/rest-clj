@@ -24,8 +24,7 @@
                        {:compiler {:output-to "target/rest.js"
                                    :optimizations :advanced
                                    :pretty-print true}
-                        :source-paths ["src"]
-                        :jar true}]
+                        :source-paths ["src"]}]
               :crossover-jar true
               :crossovers [rest.http rest.io]
               :repl-listen-port 9000
