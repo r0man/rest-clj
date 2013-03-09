@@ -32,7 +32,7 @@
 (deftest test-wrap-stacktrace-client
   (is (= {:status 200} ((wrap-stacktrace-client (fn [_] {:status 200})) {})))
   (try
-    ((wrap-stacktrace-client (fn [_] {:status 500 :body parsed-exception})) {})
+    ((wrap-stacktrace-client (fn [_] {:status 500 :body {:exception parsed-exception}})) {})
     (assert false)
     (catch Throwable t
       (is (= (.getMessage raw-exception) (.getMessage t))))))
@@ -40,4 +40,4 @@
 (deftest test-wrap-stacktrace-server
   (let [response ((wrap-stacktrace-server (fn [r] (throw raw-exception))) {})]
     (is (= 500 (:status response)))
-    (is (= parsed-exception (:body response)))))
+    (is (= parsed-exception (-> response :body :exception)))))

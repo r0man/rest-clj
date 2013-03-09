@@ -51,13 +51,15 @@
     (fn [request]
       (let [response (handler request)]
         (cond
+         (unexceptional-status? (:status response))
+         response
          (= 404 (:status response))
          (assoc response :body nil)
          (= 422 (:status response))
-         (throw+ {:type :http/unprocessable-entity :errors (:body response)})
-         (unexceptional-status? (:status response))
-         response
-         :else (throw (make-throwable (:body response))))))))
+         (throw+ (assoc response :errors (:body response)))
+         (:exception (:body response))
+         (throw (make-throwable (:exception (:body response))))
+         :else (throw+ response))))))
 
 (defn wrap-stacktrace-server
   "Wrap the Ring `handler` and return thrown exceptions in a map."
@@ -67,4 +69,4 @@
       (try
         (handler request)
         (catch Exception e
-          {:status status :body (parse-exception e)})))))
+          {:status status :body {:exception (parse-exception e)}})))))
