@@ -4,7 +4,7 @@
    [clojure.string :refer [blank? replace]]
    [rest.json :refer [json-str read-json]]))
 
-(def ^:dynamic *content-type* "application/clojure")
+(def ^:dynamic *content-type* "application/edn")
 
 (defn body [response]
   (cond
@@ -28,7 +28,7 @@
 (defmethod deserialize :default
   [response] response)
 
-(defmethod deserialize :application/clojure
+(defmethod deserialize :application/edn
   [{:keys [body] :as response}]
   (if (string? body)
     (update-in response [:body] read-string)
@@ -45,12 +45,12 @@
   (fn [request]
     (keyword (or (content-type request) *content-type*))))
 
-(defmethod serialize :application/clojure
+(defmethod serialize :application/edn
   [{:keys [body] :as request}]
   (if body
     (-> (update-in request [:body] prn-str)
-        (assoc :content-type "application/clojure")
-        (assoc-in [:headers "content-type"] "application/clojure"))
+        (assoc :content-type "application/edn")
+        (assoc-in [:headers "content-type"] "application/edn"))
     request))
 
 (defmethod serialize :default

@@ -16,7 +16,7 @@
   (is (nil? (deserialize nil)))
   (is (= {} (deserialize {})))
   (let [body {:a 1 :b 2}]
-    (let [request (deserialize {:body (prn-str body) :headers {"content-type" "application/clojure"}})]
+    (let [request (deserialize {:body (prn-str body) :headers {"content-type" "application/edn"}})]
       (is (= body (:body request))))
     (let [request (deserialize {:body (json-str body) :headers {"content-type" "application/json"}})]
       (is (= body (:body request))))))
@@ -26,17 +26,17 @@
   (is (= {} (serialize {})))
   (let [body {:a 1 :b 2}]
     (let [request (serialize {:body body})]
-      (is (= :application/clojure (content-type request)))
+      (is (= :application/edn (content-type request)))
       (is (= (prn-str body) (:body request))))
-    (let [request (serialize {:body body :headers {"content-type" "application/clojure"}})]
-      (is (= :application/clojure (content-type request)))
+    (let [request (serialize {:body body :headers {"content-type" "application/edn"}})]
+      (is (= :application/edn (content-type request)))
       (is (= (prn-str body) (:body request))))
     (let [request (serialize {:body body :headers {"content-type" "application/json"}})]
       (is (= :application/json (content-type request)))
       (is (= (json-str body) (:body request))))))
 
 (deftest test-wrap-accept
-  (is (= {:body {} :headers {"accept" "application/clojure"}}
+  (is (= {:body {} :headers {"accept" "application/edn"}}
          ((wrap-accept identity) {:body {}})))
-  (is (= {:body {} :headers {"accept" "application/clojure"}}
-         ((wrap-accept identity "application/clojure") {:body {}}))))
+  (is (= {:body {} :headers {"accept" "application/edn"}}
+         ((wrap-accept identity "application/edn") {:body {}}))))
