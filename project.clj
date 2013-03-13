@@ -10,11 +10,11 @@
                  [org.clojure/clojure "1.5.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]
                  [slingshot "0.10.3"]]
-  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.1"]]}}
+  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.2"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :pretty-print true}
                         :source-paths ["test"]}
                        {:compiler {:output-to "target/rest-debug.js"
