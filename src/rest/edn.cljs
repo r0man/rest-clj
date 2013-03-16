@@ -1,4 +1,4 @@
-(ns rest.clojurescript
+(ns rest.edn
   (:require [cljs.reader :as reader]))
 
 (defn read-string [s]

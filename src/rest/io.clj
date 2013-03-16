@@ -1,8 +1,8 @@
 (ns rest.io
   (:refer-clojure :exclude [replace])
-  (:require ;*CLJSBUILD-REMOVE*;[rest.clojurescript :refer [read-string]]
-   [clojure.string :refer [blank? replace]]
-   [rest.json :refer [json-str read-json]]))
+  (:require [clojure.string :refer [blank? replace]]
+            [rest.edn :as edn]
+            [rest.json :refer [json-str read-json]]))
 
 (def ^:dynamic *content-type* "application/edn")
 
@@ -31,7 +31,7 @@
 (defmethod deserialize :application/edn
   [{:keys [body] :as response}]
   (if (string? body)
-    (update-in response [:body] read-string)
+    (update-in response [:body] edn/read-string)
     response))
 
 (defmethod deserialize :application/json
