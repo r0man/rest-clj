@@ -10,7 +10,7 @@
                  [org.clojure/clojure "1.5.0"]
                  [routes-clj "0.0.2-SNAPSHOT"]
                  [slingshot "0.10.3"]]
-  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.2"]]}}
+  :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.3"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds [{:compiler {:output-to "target/rest-test.js"
