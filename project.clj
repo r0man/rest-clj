@@ -1,4 +1,4 @@
-(defproject rest-clj "0.0.4-SNAPSHOT"
+(defproject rest-clj "0.0.4"
   :description "A HTTP REST library for Clojure."
   :url "http://github.com/r0man/rest-clj"
   :license {:name "Eclipse Public License"
@@ -6,9 +6,9 @@
   :min-lein-version "2.0"
   :dependencies [[clj-http "0.7.2"]
                  [clj-stacktrace "0.2.5"]
-                 [cljs-http "0.0.4-SNAPSHOT"]
+                 [cljs-http "0.0.4"]
                  [org.clojure/clojure "1.5.1"]
-                 [routes-clj "0.0.4-SNAPSHOT"]
+                 [routes-clj "0.0.4"]
                  [slingshot "0.10.3"]]
   :profiles {:dev {:dependencies [[com.cemerick/clojurescript.test "0.0.3"]]}}
   :plugins [[lein-cljsbuild "0.3.0"]]
